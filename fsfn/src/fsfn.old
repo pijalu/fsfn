@@ -1,0 +1,184 @@
+/***************************************************************************
+ *   Copyright (C) 2005 by Poissinger Pierre   *
+ *   pierre.poissinger@gmail.com   *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <fcntl.h>
+
+// input thing
+#include <linux/input.h>
+
+#include "generics.h"
+#include "acpihandler.h"
+#include "sound.h"
+#ifdef USE_XOSD
+#include "basicmsg.h"
+#endif
+
+static char devinput[255];
+
+void loop() {
+  // event interface
+  int fd = -1;		/* the file descriptor for the device */
+  int i;			/* loop counter */
+  size_t read_bytes;		/* how many bytes were read */
+  struct input_event ev[64];	/* the events (up to 64 at once) */
+  int key; /*key code */
+  /* used if event hit fn */
+  int hasSomething;
+
+#ifdef HAVE_LIBXOSD
+ // prepare queue handling
+  int flag,brightness,sound;
+  createqueue();
+#endif
+  
+  if ((fd = open(devinput, O_RDONLY)) < 0) {
+	  perror("event interface open failed");
+	  exit(1);
+  }
+  
+  
+  
+  while (1) {			/* loop */
+	hasSomething = 0;	/* nothing yet */
+
+	/*
+	 * read the event interface 
+	 */
+	read_bytes = read(fd, ev, sizeof(struct input_event) * 64);
+
+	if (read_bytes < (int) sizeof(struct input_event)) {
+	    perror("sonyfn: short read");
+	    exit(1);
+	}
+
+	/*
+	 * Loop for all readed events until we have something
+	 * interesting.. 
+	 */
+	for (i = 0;
+	     !hasSomething
+	     && (i < (int) (read_bytes / sizeof(struct input_event)));
+	     i++) {
+	    hasSomething = (ev[i].type == FN_INPUT_TYPE)
+		&& (ev[i].code == FN_INPUT_CODE)
+		&& (ev[i].value == FN_INPUT_VALUE);
+	}
+
+	/*
+	 * If we got a FN event, plz do something... 
+	 */
+	if (hasSomething && (key = getCodes())) {
+	    if ((key & FN_F5) == FN_F5) {	// lower brightness
+#ifdef HAVE_LIBXOSD
+		flag=MOD_BRIGHTNESS;
+		brightness=setBrightness(getBrightness() - 1);
+		sendmsg(flag,brightness,sound);
+#else
+		setBrightness(getBrightness() - 1);
+#endif
+
+	    }
+	    if ((key & FN_F6) == FN_F6) {	// higher brightness
+#ifdef HAVE_LIBXOSD
+		flag=MOD_BRIGHTNESS;
+		brightness=setBrightness(getBrightness() + 1);
+		sendmsg(flag,brightness,sound);
+#else
+		setBrightness(getBrightness() + 1);
+#endif
+	    }
+	    if ((key & FN_F2) == FN_F2) {
+#ifdef HAVE_LIBXOSD
+		flag=MOD_SOUND;
+		sound=mute();
+		sendmsg(flag,brightness,sound);
+#else
+		mute();
+#endif
+	    }
+	    if ((key & FN_F3) == FN_F3) {
+#ifdef HAVE_LIBXOSD
+		flag=MOD_SOUND;
+		sound=volume_down();
+		sendmsg(flag,brightness,sound);
+#else
+		volume_down();
+#endif
+	    }
+	    if ((key & FN_F4) == FN_F4) {
+#ifdef HAVE_LIBXOSD
+		flag=MOD_SOUND;
+		sound=volume_up();
+		sendmsg(flag,brightness,sound);
+#else
+		volume_up();
+#endif
+	    }
+	    if ((key & FN_F12) == FN_F12) {
+		if (fork() == 0) {
+		    /*
+		     * that's my home made script for swsusp #!/bin/sh
+		     * sync echo "disk" > /sys/power/state 
+		     */
+		    if (execv("/bin/hibernate", NULL) == -1) {
+			perror("Cannot run hibernate");
+		    }
+		}
+	    }
+	    /*
+	     * rest i still don't care 
+	     */
+	}
+    }// while
+}
+
+
+void deamonize() {
+	switch (fork()) {
+		case 0:
+			loop();
+			break;
+		case -1:
+			perror("Failed to deamonize");
+			exit(1);
+		default: 
+			break;
+	}	
+}
+
+
+int main(int argc, char *argv[])
+{
+	if (argc!=2) {
+		strncpy(devinput,"/dev/input/event0",255);
+	}
+	else {
+		strncpy(devinput,argv[1],255);
+	}
+	deamonize();
+	return EXIT_SUCCESS;
+}
