@@ -139,6 +139,7 @@ getmsg (int *flag, int *brightness_level, int *sound_level)
 	      sizeof (struct infodata), MSG_TYPE_INFO, 0) == -1)
     {
       perror ("Failed to get message");
+      return -1;
     }
   *flag = msg.data.flag;
   *brightness_level = msg.data.brightness_level;

@@ -18,11 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef _SOUND_H_
-#define _SOUND_H_
-
-// config hard coded :p
-#define  MIXER_DEV	"/dev/mixer"
+#ifndef _ALSASOUND_H_
+#define _ALSASOUND_H_
 
 int get_volume(int *value);
 int set_volume(int *value);

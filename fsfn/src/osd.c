@@ -170,7 +170,8 @@ osd_volume (int level)
     }
   else
     {
-      retval = xosd_display (disp_obj, 0, XOSD_slider, level / OSD_VSCALE);
+//      retval = xosd_display (disp_obj, 0, XOSD_slider, level / OSD_VSCALE);
+      retval = xosd_display (disp_obj, 0, XOSD_slider, level);
       retval = xosd_display (disp_obj, 1, XOSD_string, "Volume");
       if (retval == -1)
 	{

@@ -40,7 +40,8 @@ subdir = src
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/aclocal/libxosd.m4 \
+am__aclocal_m4_deps = $(top_srcdir)/aclocal/alsa.m4 \
+	$(top_srcdir)/aclocal/libxosd.m4 \
 	$(top_srcdir)/aclocal/libxosd_version.m4 \
 	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
@@ -51,8 +52,8 @@ CONFIG_CLEAN_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_fsfn_OBJECTS = fsfn.$(OBJEXT) sound.$(OBJEXT) acpihandler.$(OBJEXT) \
-	basicmsg.$(OBJEXT) osd.$(OBJEXT)
+am_fsfn_OBJECTS = fsfn.$(OBJEXT) alsasound.$(OBJEXT) \
+	acpihandler.$(OBJEXT) basicmsg.$(OBJEXT) osd.$(OBJEXT)
 fsfn_OBJECTS = $(am_fsfn_OBJECTS)
 fsfn_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -69,6 +70,8 @@ ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
+ALSA_CFLAGS = @ALSA_CFLAGS@
+ALSA_LIBS = @ALSA_LIBS@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
@@ -142,14 +145,14 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-fsfn_SOURCES = fsfn.c sound.c acpihandler.c basicmsg.c osd.c
+fsfn_SOURCES = fsfn.c alsasound.c acpihandler.c basicmsg.c osd.c
 
 # set the include path found by configure
 INCLUDES = $(all_includes)
 
 # the library search path.
 fsfn_LDFLAGS = $(all_libraries) 
-noinst_HEADERS = sound.h acpihandler.h osd.h generics.h basicmsg.h
+noinst_HEADERS = alsasound.h acpihandler.h osd.h generics.h basicmsg.h
 AM_CFLAGS = -Wall
 all: all-am
 
@@ -218,10 +221,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/acpihandler.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alsasound.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/basicmsg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fsfn.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/osd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sound.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

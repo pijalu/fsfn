@@ -2,7 +2,7 @@ AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
 
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE(fsfn, 0.1)
+AM_INIT_AUTOMAKE(fsfn, 0.2)
 
 dnl osd 
 # additional options
@@ -24,6 +24,8 @@ AC_FUNC_FORK
 AC_PROG_GCC_TRADITIONAL
 AC_TYPE_SIZE_T
 
+AM_PATH_ALSA
+
 
 LIBS="$LIBS $X_PRE_LIBS $X_LIBS  $X_EXTRA_LIBS"
 CFLAGS="$CFLAGS $X_CFLAGS -Wall"
@@ -33,9 +35,6 @@ if test "x$enable_xosd" = "xyes"; then
   AM_PATH_LIBXOSD(AC_DEFINE(HAVE_LIBXOSD))
   AM_CHECK_LIBXOSD
 fi
-
-
-
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

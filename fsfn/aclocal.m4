@@ -848,5 +848,6 @@ AC_SUBST([am__tar])
 AC_SUBST([am__untar])
 ]) # _AM_PROG_TAR
 
+m4_include([aclocal/alsa.m4])
 m4_include([aclocal/libxosd.m4])
 m4_include([aclocal/libxosd_version.m4])

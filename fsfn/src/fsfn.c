@@ -36,7 +36,7 @@
 
 #include "generics.h"
 #include "acpihandler.h"
-#include "sound.h"
+#include "alsasound.h"
 
 #ifdef HAVE_LIBXOSD
 #include "basicmsg.h"
@@ -204,7 +204,12 @@ looposd ()
 
   while (1 == 1)
     {
-      getmsg (&flag, &brightness, &sound);
+      if (getmsg (&flag, &brightness, &sound)==-1) {
+      	break; // exit the loop if problems
+      }
+
+      printf("sound=%d\n",sound);
+      
       //      printf("Get a msg\n");
       if (flag & MOD_BRIGHTNESS)
 	{
