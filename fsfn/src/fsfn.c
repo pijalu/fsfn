@@ -208,9 +208,6 @@ looposd ()
       	break; // exit the loop if problems
       }
 
-      printf("sound=%d\n",sound);
-      
-      //      printf("Get a msg\n");
       if (flag & MOD_BRIGHTNESS)
 	{
 	  osd_brightness (brightness);
