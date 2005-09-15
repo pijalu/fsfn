@@ -232,6 +232,12 @@ mute ()
   if (value)
     {
       oldvalue = value;
+      
+      // alsa seems to agree on volume 0 and continue to get normal level ???
+      // just to be sure...
+      value = 1;
+      set_volume(&value);
+      
       value = 0;
       return set_volume (&value);
     }
