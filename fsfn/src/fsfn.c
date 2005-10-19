@@ -226,11 +226,20 @@ void
 deamonize ()
 {
   int pidfile;
+  int i;
   char str[10];
   
   switch (fork ())
     {
     case 0:
+	    
+      setsid();
+      for (i=getdtablesize();i>=0;--i) close(i);
+      i=open("/dev/null",O_RDWR); /* open stdin */
+      dup(i); /* stdout */
+      dup(i); /* stderr */
+      umask(027);
+      
       if ((pidfile=open(PID_FILE,O_RDWR|O_CREAT,0640))<0) {
       	perror("Failed to create pid file");
 	exit(-1);
