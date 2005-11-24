@@ -1615,7 +1615,7 @@ fi
 
 # Define the identity of the package.
  PACKAGE=fsfn
- VERSION=0.2
+ VERSION=0.3
 
 
 cat >>confdefs.h <<_ACEOF
