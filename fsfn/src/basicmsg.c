@@ -56,6 +56,7 @@ genkey ()
       if ((mykey = ftok (KEY_PATH, KEY_PROJID)) == -1)
 	{
 	  perror ("Failed to generate key");
+	  fprintf(stderr,"Please check sony_acpi module is correctly loaded\n");
 	  exit (-1);
 	}
     }
@@ -94,6 +95,9 @@ loadqueue ()
   if ((msgqueue_id = msgget (genkey (), 0666)) == -1)
     {
       perror ("Cannot create IPC message queue");
+      fprintf(stderr,"fsfn client cannot find fsfn deamon:\n"\
+	      "Please be sure you first started fsfn as deamon.\n"\
+	      "(Note: To start deamon, run fsfn as root without -o option.)\n"); 
       exit (-1);
     }
   return EXIT_SUCCESS;
