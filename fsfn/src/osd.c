@@ -86,6 +86,7 @@ osd_brightness (int level)
   // the size of the increment
   static int inc_size = 100.0 / (MAX_BRIGHT - 1);
   int retval = 0;
+  int retval_nc = 0; // non critical errors
   int pos;
 
   if (!osd_load ())
@@ -104,17 +105,23 @@ osd_brightness (int level)
   retval |= xosd_set_vertical_offset (disp_obj, 30);
   retval |= xosd_set_colour (disp_obj, OSD_BCOLOR);
   retval |= xosd_set_timeout (disp_obj, OSD_TIME);
-  retval |= xosd_set_font (disp_obj, OSD_FONT);
+  
+  retval_nc |= xosd_set_font (disp_obj, OSD_FONT);
 
   if (retval)
     {
-      syslog (LOG_NOTICE, "Failed setup onscreen display: %s\n", xosd_error);
+      syslog (LOG_CRIT, "Failed setup onscreen display: %s\n", xosd_error);
       // if we arrive here, object must be dead...
       osd_unload ();
       return -1;
     }
   else
     {
+      // no need to stop for these errors
+      if (retval_nc) {
+      	syslog (LOG_CRIT, "Setup onscreen display: %s\n", xosd_error);
+      }
+      
       if (level == MAX_BRIGHT)
 	{
 	  pos = 100;
