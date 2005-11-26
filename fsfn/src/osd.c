@@ -150,6 +150,8 @@ int
 osd_volume (int level)
 {
   int retval = 0;
+  int retval_nc = 0; // non critical errors
+
 
   // create if needed
   if (!osd_load ())
@@ -168,7 +170,8 @@ osd_volume (int level)
   retval |= xosd_set_vertical_offset (disp_obj, 30);
   retval |= xosd_set_colour (disp_obj, OSD_VCOLOR);
   retval |= xosd_set_timeout (disp_obj, OSD_TIME);
-  retval |= xosd_set_font (disp_obj, OSD_FONT);
+  
+  retval_nc |= xosd_set_font (disp_obj, OSD_FONT);
 
   if (retval)
     {
@@ -179,6 +182,11 @@ osd_volume (int level)
     }
   else
     {
+      // no need to stop for these errors
+      if (retval_nc) {
+      	syslog (LOG_CRIT, "Setup onscreen display: %s\n", xosd_error);
+      }
+
 //      retval = xosd_display (disp_obj, 0, XOSD_slider, level / OSD_VSCALE);
       retval = xosd_display (disp_obj, 0, XOSD_slider, level);
       retval = xosd_display (disp_obj, 1, XOSD_string, "Volume");
