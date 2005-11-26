@@ -33,6 +33,7 @@
 
 
 typedef struct {
+	// keys
 	char F2_CMD[MAX_CFG_LENGTH];
 	char F3_CMD[MAX_CFG_LENGTH];
 	char F4_CMD[MAX_CFG_LENGTH];
@@ -43,6 +44,12 @@ typedef struct {
 	char F12_CMD[MAX_CFG_LENGTH];
 	char S1_CMD[MAX_CFG_LENGTH];
 	char S2_CMD[MAX_CFG_LENGTH];
+	// others
+	// osd
+	char OSD_VCOLOR[MAX_CFG_LENGTH];
+	char OSD_BCOLOR[MAX_CFG_LENGTH];
+	char OSD_FONT[MAX_CFG_LENGTH];
+	// device
 	char DEVICE[MAX_CFG_LENGTH];	
 } config_list;
 
@@ -79,6 +86,24 @@ void proceedConfig(char* name,char* value) {
 		strncpy(UserConfig->DEVICE,value,MAX_CFG_LENGTH);
 		syslog(LOG_INFO,"DEVICE=%s",UserConfig->DEVICE);
 	}
+#ifdef HAVE_LIBXOSD
+	else if (strcasecmp(name,"OSD_VCOLOR")==0) {
+		strncpy(UserConfig->OSD_VCOLOR,value,MAX_CFG_LENGTH);
+		syslog(LOG_INFO,"OSD_VCOLOR=%s",UserConfig->OSD_VCOLOR);
+	}
+	else if (strcasecmp(name,"OSD_BCOLOR")==0) {
+		strncpy(UserConfig->OSD_BCOLOR,value,MAX_CFG_LENGTH);
+		syslog(LOG_INFO,"OSD_BCOLOR=%s",UserConfig->OSD_BCOLOR);
+	}
+	else if (strcasecmp(name,"OSD_FONT")==0) {
+		strncpy(UserConfig->OSD_FONT,value,MAX_CFG_LENGTH);
+		syslog(LOG_INFO,"OSD_FONT=%s",UserConfig->OSD_FONT);
+	}
+#endif
+	else if (strcasecmp(name,"F2_CMD")==0) {
+		strncpy(UserConfig->F2_CMD,value,MAX_CFG_LENGTH);
+		syslog(LOG_INFO,"F2_CMD=%s",UserConfig->F2_CMD);
+	}	
 	else if (strcasecmp(name,"F2_CMD")==0) {
 		strncpy(UserConfig->F2_CMD,value,MAX_CFG_LENGTH);
 		syslog(LOG_INFO,"F2_CMD=%s",UserConfig->F2_CMD);
@@ -129,6 +154,9 @@ void setDefConfig()
   {
 	strncpy(UserConfig->DEVICE,"/dev/input/event0",MAX_CFG_LENGTH);
 	strncpy(UserConfig->F12_CMD,"/bin/hibernate",MAX_CFG_LENGTH);
+	strncpy(UserConfig->OSD_VCOLOR,"red",MAX_CFG_LENGTH);
+	strncpy(UserConfig->OSD_BCOLOR,"blue",MAX_CFG_LENGTH);
+	strncpy(UserConfig->OSD_FONT,"-*-*-*-*-*-*-20-*-*-*-*-*-*-*",MAX_CFG_LENGTH);
   }
 
 // load
@@ -215,6 +243,9 @@ char* getConfig(int CONFIGCODE) {
 			case S2_BTN: return UserConfig->S2_CMD;
 			// other configs
 			case CFG_DEVICE: return UserConfig->DEVICE;
+			case CFG_OSDVCOLOR: return UserConfig->OSD_VCOLOR;
+			case CFG_OSDBCOLOR: return UserConfig->OSD_BCOLOR;
+			case CFG_OSDFONT: return UserConfig->OSD_FONT;
 			default: break;
 		}
 	}	

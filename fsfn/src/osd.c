@@ -33,14 +33,15 @@
 #include <syslog.h>
 
 #include "generics.h"
+#include "readconfig.h"
 
 // the volume osd color
-#define OSD_VCOLOR "red"
+#define OSD_VCOLOR 	getConfig(CFG_OSDVCOLOR)
 // the brightness osd color
-#define OSD_BCOLOR "blue"
+#define OSD_BCOLOR 	getConfig(CFG_OSDBCOLOR)
 // the osd font... change the 7th position for size
 // or use xfontsel to explore the options
-#define OSD_FONT "-*-*-*-*-*-*-20-*-*-*-*-*-*-*"
+#define OSD_FONT 	getConfig(CFG_OSDFONT)
 // the length of time the osd is shown
 #define OSD_TIME 3
 
@@ -110,7 +111,7 @@ osd_brightness (int level)
 
   if (retval)
     {
-      syslog (LOG_CRIT, "Failed setup onscreen display: %s\n", xosd_error);
+      syslog (LOG_CRIT, "Failed critical setup onscreen display: %s\n", xosd_error);
       // if we arrive here, object must be dead...
       osd_unload ();
       return -1;
@@ -119,7 +120,7 @@ osd_brightness (int level)
     {
       // no need to stop for these errors
       if (retval_nc) {
-      	syslog (LOG_CRIT, "Setup onscreen display: %s\n", xosd_error);
+      	syslog (LOG_CRIT, "Failed non critical setup onscreen display: %s\n", xosd_error);
       }
       
       if (level == MAX_BRIGHT)
@@ -175,7 +176,7 @@ osd_volume (int level)
 
   if (retval)
     {
-      syslog (LOG_NOTICE, "Failed setup onscreen display: %s", xosd_error);
+      syslog (LOG_NOTICE, "Failed critical setup onscreen display: %s", xosd_error);
       // kill possible osd and return
       osd_unload ();
       return -1;
@@ -184,7 +185,7 @@ osd_volume (int level)
     {
       // no need to stop for these errors
       if (retval_nc) {
-      	syslog (LOG_CRIT, "Setup onscreen display: %s\n", xosd_error);
+      	syslog (LOG_CRIT, "Failed non-critical setup onscreen display: %s\n", xosd_error);
       }
 
 //      retval = xosd_display (disp_obj, 0, XOSD_slider, level / OSD_VSCALE);
