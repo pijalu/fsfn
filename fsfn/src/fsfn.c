@@ -30,6 +30,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <signal.h>
+#include <syslog.h>
 
 // input thing
 #include <linux/input.h>
@@ -50,6 +51,7 @@ void signal_handler(sig)
 {
 	// only needed to clean
 	killqueue ();
+	closelog();
 	exit(0);
 }
 
@@ -75,15 +77,23 @@ loop ()
 
   if ((fd = open (devinput, O_RDONLY)) < 0)
     {
-      printf ("Opening event interface %s\n", devinput);
-      perror ("event interface open failed");
+      syslog (LOG_CRIT,"event interface (%s) open failed: %m",devinput);
       killqueue ();
+      closelog ();
       exit (1);
     }
 
   /* handle important signal */
-  signal(SIGTERM,signal_handler);
-  signal(SIGKILL,signal_handler);
+  if (signal(SIGTERM,signal_handler) < 0)
+    {
+      perror("signal");
+      exit(1);
+    }
+  if (signal(SIGHUP,signal_handler) < 0)
+    {
+      perror("signal");
+      exit(1);
+    }
 
 
   while (1)
@@ -97,8 +107,9 @@ loop ()
 
       if (read_bytes < (int) sizeof (struct input_event))
 	{
-	  perror ("sonyfn: short read");
+	  syslog (LOG_CRIT,"short read: %m");
 	  killqueue ();
+	  closelog ();
 	  exit (1);
 	}
 
@@ -181,7 +192,7 @@ loop ()
 		   */
 		  if (execv ("/bin/hibernate", NULL) == -1)
 		    {
-		      perror ("Cannot run hibernate");
+		      syslog (LOG_NOTICE,"Cannot run /bin/hibernate: %m");
 		    }
 		}
 	    }
@@ -234,6 +245,9 @@ deamonize ()
     case 0:
 	    
       setsid();
+
+      openlog("fsfn",LOG_CONS|LOG_NDELAY|LOG_PID,LOG_DAEMON);
+
       for (i=getdtablesize();i>=0;--i) close(i);
       i=open("/dev/null",O_RDWR); /* open stdin */
       dup(i); /* stdout */
@@ -241,11 +255,11 @@ deamonize ()
       umask(027);
       
       if ((pidfile=open(PID_FILE,O_RDWR|O_CREAT,0640))<0) {
-      	perror("Failed to create pid file");
+      	syslog(LOG_CRIT,"Failed to create pid file: %m");
 	exit(-1);
       }
       if (lockf(pidfile,F_TLOCK,0)<0) {
-	      perror("Failed to lock pid file");
+	      syslog(LOG_CRIT,"Failed to lock pid file: %m");
 	      exit(-1); /* can not lock */
       }
       sprintf(str,"%d\n",getpid());
