@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <syslog.h>
 
 #include "acpihandler.h"
 #include "generics.h"
@@ -43,12 +44,12 @@ getBrightness ()
 
   if ((handle = fopen ("/proc/acpi/sony/brightness", "rb")) == NULL)
     {
-      perror ("Error opening /proc/acpi/sony/brightness");
+      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   if (fscanf (handle, "%d", &ret) != 1)
     {
-      perror ("Error reading /proc/acpi/sony/brightness");
+      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   fclose (handle);
@@ -76,12 +77,12 @@ setBrightness (int b)
 
   if ((handle = fopen ("/proc/acpi/sony/brightness", "wb")) == NULL)
     {
-      perror ("Error opening /proc/acpi/sony/brightness");
+      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   if (fprintf (handle, "%d", b) != 1)
     {
-      perror ("Error writing /proc/acpi/sony/brightness");
+      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   fclose (handle);
@@ -99,12 +100,12 @@ getCodes ()
   int ret;
   if ((handle = fopen ("/proc/acpi/sony/fnkey", "rb")) == NULL)
     {
-      perror ("Error opening /proc/acpi/sony/fnkey");
+      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   if (fscanf (handle, "%d", &ret) != 1)
     {
-      perror ("Error reading /proc/acpi/sony/fnkey");
+      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   fclose (handle);

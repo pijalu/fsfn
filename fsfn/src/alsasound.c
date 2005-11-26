@@ -32,6 +32,7 @@
 #include <assert.h>
 #include <alsa/asoundlib.h>
 #include <sys/poll.h>
+#include <syslog.h>
 
 #include "alsasound.h"
 
@@ -55,6 +56,9 @@ static void error(const char *fmt,...)
 	vfprintf(stderr, fmt, va);
 	fprintf(stderr, "\n");
 	va_end(va);
+	va_start(va, fmt);
+	vsyslog(LOG_NOTICE, fmt, va);
+	va_end(va);
 }
 
 
@@ -64,7 +68,7 @@ int loadMixer() {
 		int err;
 		
 		if ((err = snd_mixer_open(&handle,0)) < 0) {
-			error("Mixer open error: %s\n", snd_strerror(err));
+			error("Mixer open error: %s", snd_strerror(err));
 			return err;
 		}
 	
@@ -95,7 +99,7 @@ int loadMixer() {
 		/* load elem */
 		elem = snd_mixer_find_selem(handle, sid);
 		if (!elem) {
-			error("Unable to find simple control '%s',%i\n", 
+			error("Unable to find simple control '%s',%i", 
 			 snd_mixer_selem_id_get_name(sid), 
 			 snd_mixer_selem_id_get_index(sid)
 			);
@@ -153,7 +157,7 @@ get_volume (int *value)
 	long rval;
 	
 	if (!loadMixer()) {
-		error("Unable to load mixer\n");
+		error("Unable to load mixer");
 		return 0;
 	}
 
@@ -174,7 +178,7 @@ set_volume (int *value)
 	long val;
 	
 	if (!loadMixer()) {
-		error("Unable to load mixer\n");
+		error("Unable to load mixer");
 		return 0;
 	}
 

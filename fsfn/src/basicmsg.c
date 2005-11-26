@@ -22,6 +22,7 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <syslog.h>
 
 #include "basicmsg.h"
 
@@ -55,8 +56,9 @@ genkey ()
     {
       if ((mykey = ftok (KEY_PATH, KEY_PROJID)) == -1)
 	{
-	  perror ("Failed to generate key");
-	  fprintf(stderr,"Please check sony_acpi module is correctly loaded\n");
+	  syslog (LOG_CRIT,"Failed to generate key: %m");
+	  syslog (LOG_NOTICE,
+		  "Please check sony_acpi module is correctly loaded");
 	  exit (-1);
 	}
     }
@@ -79,7 +81,7 @@ createqueue ()
 
   if ((msgqueue_id = msgget (genkey (), IPC_CREAT | 0666)) == -1)
     {
-      perror ("Cannot load/create IPC message queue");
+      syslog (LOG_CRIT,"Cannot load/create IPC message queue: %m");
       exit (-1);
     }
 }
@@ -94,10 +96,11 @@ loadqueue ()
     }
   if ((msgqueue_id = msgget (genkey (), 0666)) == -1)
     {
-      perror ("Cannot create IPC message queue");
-      fprintf(stderr,"fsfn client cannot find fsfn deamon:\n"\
-	      "Please be sure you first started fsfn as deamon.\n"\
-	      "(Note: To start deamon, run fsfn as root without -o option.)\n"); 
+      syslog (LOG_CRIT,"Cannot create IPC message queue: %m");
+      syslog (LOG_NOTICE,"fsfn client cannot find fsfn deamon:");
+      syslog (LOG_NOTICE,"Please be sure you first started fsfn as deamon.");
+      syslog (LOG_NOTICE,"(Note: To start deamon, run fsfn as root "
+	      "without -o option.)");
       exit (-1);
     }
   return EXIT_SUCCESS;
@@ -109,7 +112,7 @@ killqueue ()
 {
   if (msgctl (msgqueue_id, IPC_RMID, 0))
     {
-      perror ("Error deleting queue:");
+      syslog (LOG_NOTICE,"Error deleting queue: %m");
     }
 }
 
@@ -127,7 +130,7 @@ sendmsg (int flag, int brightness_level, int sound_level)
   if ((msgsnd (msgqueue_id, (struct msgbuf *) &msg,
 	       sizeof (struct infodata), 0)) == -1)
     {
-      perror ("Failed to send message");
+      syslog (LOG_CRIT,"Failed to send message: %m");
       exit (-1);
     }
   return EXIT_SUCCESS;
@@ -142,7 +145,7 @@ getmsg (int *flag, int *brightness_level, int *sound_level)
   if (msgrcv (msgqueue_id, (struct msgbuf *) &msg,
 	      sizeof (struct infodata), MSG_TYPE_INFO, 0) == -1)
     {
-      perror ("Failed to get message");
+      syslog (LOG_NOTICE,"Failed to get message: %m");
       return -1;
     }
   *flag = msg.data.flag;

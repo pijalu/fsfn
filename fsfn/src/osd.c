@@ -30,6 +30,7 @@
 #include <xosd.h>
 #include <locale.h>
 #include <X11/Xlib.h>
+#include <syslog.h>
 
 #include "generics.h"
 
@@ -60,8 +61,8 @@ osd_load ()
       disp_obj = xosd_create (2);
       if (setlocale (LC_ALL, "") == NULL || !XSupportsLocale ())
 	{
-	  fprintf (stderr,
-		   "Locale not available, expect problems with fonts.\n");
+	  syslog (LOG_NOTICE,
+		   "Locale not available, expect problems with fonts.");
 	}
     }
   return (disp_obj != NULL);
@@ -89,25 +90,25 @@ osd_brightness (int level)
 
   if (!osd_load ())
     {
-      fprintf (stderr,
-	       "Failed to display information onscreen: %s\nAre you running X?\n",
-	       xosd_error);
+      syslog (LOG_NOTICE, "Failed to display information onscreen: %s",
+	      xosd_error);
+      syslog (LOG_NOTICE, "Are you running X?");
       return -1;
     }
 
-  retval &= xosd_set_bar_length (disp_obj, 100);
-  retval &= xosd_set_pos (disp_obj, XOSD_bottom);
-  retval &= xosd_set_align (disp_obj, XOSD_center);
-  retval &= xosd_set_shadow_offset (disp_obj, 1);
-  retval &= xosd_set_outline_offset (disp_obj, 1);
-  retval &= xosd_set_vertical_offset (disp_obj, 30);
-  retval &= xosd_set_colour (disp_obj, OSD_BCOLOR);
-  retval &= xosd_set_timeout (disp_obj, OSD_TIME);
-  retval &= xosd_set_font (disp_obj, OSD_FONT);
+  retval |= xosd_set_bar_length (disp_obj, 100);
+  retval |= xosd_set_pos (disp_obj, XOSD_bottom);
+  retval |= xosd_set_align (disp_obj, XOSD_center);
+  retval |= xosd_set_shadow_offset (disp_obj, 1);
+  retval |= xosd_set_outline_offset (disp_obj, 1);
+  retval |= xosd_set_vertical_offset (disp_obj, 30);
+  retval |= xosd_set_colour (disp_obj, OSD_BCOLOR);
+  retval |= xosd_set_timeout (disp_obj, OSD_TIME);
+  retval |= xosd_set_font (disp_obj, OSD_FONT);
 
   if (retval)
     {
-      fprintf (stderr, "Failed setup onscreen display: %s\n", xosd_error);
+      syslog (LOG_NOTICE, "Failed setup onscreen display: %s\n", xosd_error);
       // if we arrive here, object must be dead...
       osd_unload ();
       return -1;
@@ -126,10 +127,11 @@ osd_brightness (int level)
       retval = xosd_display (disp_obj, 1, XOSD_string, "Brightness");
       if (retval == -1)
 	{
-	  fprintf (stderr,
-		   "Failed to display information onscreen: %s\nAre you running X?\n",
-		   xosd_error);
-	  // we can get here with a dead x connection or No connection... recreate plz
+	  syslog (LOG_NOTICE,
+		  "Failed to display information onscreen: %s", xosd_error);
+	  syslog (LOG_NOTICE, "Are you running X?");
+	  // we can get here with a dead x connection or
+	  // No connection... recreate plz
 	  osd_unload ();
 	}
     }
@@ -145,25 +147,25 @@ osd_volume (int level)
   // create if needed
   if (!osd_load ())
     {
-      fprintf (stderr,
-	       "Failed to display information onscreen: %s\nAre you running X?\n",
-	       xosd_error);
+      syslog (LOG_NOTICE,
+	      "Failed to display information onscreen: %s", xosd_error);
+      syslog (LOG_NOTICE, "Are you running X?");
       return -1;
     }
 
-  retval &= xosd_set_bar_length (disp_obj, 100);
-  retval &= xosd_set_pos (disp_obj, XOSD_bottom);
-  retval &= xosd_set_align (disp_obj, XOSD_center);
-  retval &= xosd_set_shadow_offset (disp_obj, 1);
-  retval &= xosd_set_outline_offset (disp_obj, 1);
-  retval &= xosd_set_vertical_offset (disp_obj, 30);
-  retval &= xosd_set_colour (disp_obj, OSD_VCOLOR);
-  retval &= xosd_set_timeout (disp_obj, OSD_TIME);
-  retval &= xosd_set_font (disp_obj, OSD_FONT);
+  retval |= xosd_set_bar_length (disp_obj, 100);
+  retval |= xosd_set_pos (disp_obj, XOSD_bottom);
+  retval |= xosd_set_align (disp_obj, XOSD_center);
+  retval |= xosd_set_shadow_offset (disp_obj, 1);
+  retval |= xosd_set_outline_offset (disp_obj, 1);
+  retval |= xosd_set_vertical_offset (disp_obj, 30);
+  retval |= xosd_set_colour (disp_obj, OSD_VCOLOR);
+  retval |= xosd_set_timeout (disp_obj, OSD_TIME);
+  retval |= xosd_set_font (disp_obj, OSD_FONT);
 
   if (retval)
     {
-      fprintf (stderr, "Failed setup onscreen display: %s\n", xosd_error);
+      syslog (LOG_NOTICE, "Failed setup onscreen display: %s", xosd_error);
       // kill possible osd and return
       osd_unload ();
       return -1;
@@ -175,9 +177,9 @@ osd_volume (int level)
       retval = xosd_display (disp_obj, 1, XOSD_string, "Volume");
       if (retval == -1)
 	{
-	  fprintf (stderr,
-		   "Failed to display information onscreen: %s\nAre you running X?\n",
-		   xosd_error);
+	  syslog (LOG_NOTICE,
+		  "Failed to display information onscreen: %s", xosd_error);
+	  syslog (LOG_NOTICE, "Are you running X?");
 	  osd_unload ();
 	  return -1;
 	}

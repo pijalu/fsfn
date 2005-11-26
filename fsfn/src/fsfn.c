@@ -245,9 +245,6 @@ deamonize ()
     case 0:
 	    
       setsid();
-
-      openlog("fsfn",LOG_CONS|LOG_NDELAY|LOG_PID,LOG_DAEMON);
-
       for (i=getdtablesize();i>=0;--i) close(i);
       i=open("/dev/null",O_RDWR); /* open stdin */
       dup(i); /* stdout */
@@ -296,6 +293,8 @@ main (int argc, char *argv[])
 {
   int deamon = 1;		/* deamon by default */
   int xosd = 0;			/* do not start as xosd client */
+
+  openlog("fsfn",LOG_CONS|LOG_NDELAY|LOG_PID,LOG_DAEMON);
 
   /* fill a default */
   strncpy (devinput, "/dev/input/event0", 255);
