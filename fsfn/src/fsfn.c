@@ -39,6 +39,9 @@
 #include "acpihandler.h"
 #include "alsasound.h"
 
+// config
+#include "readconfig.h"
+
 #ifdef HAVE_LIBXOSD
 #include "basicmsg.h"
 #include "osd.h"
@@ -46,16 +49,42 @@
 
 static char devinput[255];
 
+// Check and run possible config
+// ret 1 if something executed - 0 otherwise
+int checkConfig(int CONFIGCODE) 
+  {
+	char *buffer;
+	buffer=getConfig(CONFIGCODE);
+	
+	if (buffer[0]!='\0') {
+		syslog(LOG_NOTICE,"Executing [%s]",buffer);
+	 	if (fork () == 0)
+		{
+		    if (execv (buffer, NULL) == -1)
+		    {
+		      syslog (LOG_NOTICE,"Cannot run [%s]: %m",buffer);
+		      exit(0);
+		    }
+		}
+		return 1;
+	}
+	else {
+		syslog(LOG_INFO,"No config key");
+	}
+	return 0;
+  }
+
 /* signal handler */
 void signal_handler(sig)
 {
 	// only needed to clean
+#ifdef HAVE_LIBXOSD
 	killqueue ();
+#endif
+	releaseConfig();
 	closelog();
 	exit(0);
 }
-
-
 
 void
 loop ()
@@ -78,7 +107,10 @@ loop ()
   if ((fd = open (devinput, O_RDONLY)) < 0)
     {
       syslog (LOG_CRIT,"event interface (%s) open failed: %m",devinput);
+#ifdef HAVE_LIBXOSD
       killqueue ();
+#endif
+      releaseConfig();
       closelog ();
       exit (1);
     }
@@ -95,6 +127,8 @@ loop ()
       exit(1);
     }
 
+  syslog(LOG_INFO,"fsfn loaded");
+
 
   while (1)
     {				/* loop */
@@ -108,7 +142,10 @@ loop ()
       if (read_bytes < (int) sizeof (struct input_event))
 	{
 	  syslog (LOG_CRIT,"short read: %m");
+#ifdef HAVE_LIBXOSD
 	  killqueue ();
+#endif
+      	  releaseConfig();
 	  closelog ();
 	  exit (1);
 	}
@@ -131,76 +168,102 @@ loop ()
        */
       if (hasSomething && (key = getCodes ()))
 	{
+	  syslog(LOG_INFO,"fsfn catch %d",key);
 	  if ((key & FN_F5) == FN_F5)
-	    {			// lower brightness
+	    { 
+	      	// check config
+	      	if (!checkConfig(FN_F5))
+		  {
+	      		// lower brightness
 #ifdef HAVE_LIBXOSD
-	      flag = MOD_BRIGHTNESS;
-	      brightness = setBrightness (getBrightness () - 1);
-	      sendmsg (flag, brightness, sound);
+	      		flag = MOD_BRIGHTNESS;
+	      		brightness = setBrightness (getBrightness () - 1);
+	      		sendmsg (flag, brightness, sound);
 #else
-	      setBrightness (getBrightness () - 1);
+	      		setBrightness (getBrightness () - 1);
 #endif
-
+		  }
 	    }
 	  if ((key & FN_F6) == FN_F6)
-	    {			// higher brightness
+	    {
+	    	// check config
+		if (!checkConfig(FN_F6)) 
+		  {
+		  	
+	    		// higher brightness
 #ifdef HAVE_LIBXOSD
-	      flag = MOD_BRIGHTNESS;
-	      brightness = setBrightness (getBrightness () + 1);
-	      sendmsg (flag, brightness, sound);
+	      		flag = MOD_BRIGHTNESS;
+	      		brightness = setBrightness (getBrightness () + 1);
+	      		sendmsg (flag, brightness, sound);
 #else
-	      setBrightness (getBrightness () + 1);
+	      		setBrightness (getBrightness () + 1);
 #endif
+		  }
 	    }
+
 	  if ((key & FN_F2) == FN_F2)
 	    {
+		// check config
+		if (!checkConfig(FN_F2))
+		  {
 #ifdef HAVE_LIBXOSD
-	      flag = MOD_SOUND;
-	      sound = mute ();
-	      sendmsg (flag, brightness, sound);
+	      		flag = MOD_SOUND;
+	      		sound = mute ();
+	      		sendmsg (flag, brightness, sound);
 #else
-	      mute ();
+	      		mute ();			
 #endif
+		  }
 	    }
 	  if ((key & FN_F3) == FN_F3)
 	    {
+		if (!checkConfig(FN_F3))
+	          {
 #ifdef HAVE_LIBXOSD
-	      flag = MOD_SOUND;
-	      sound = volume_down ();
-	      sendmsg (flag, brightness, sound);
+	      		flag = MOD_SOUND;
+	      		sound = volume_down ();
+	      		sendmsg (flag, brightness, sound);
 #else
-	      volume_down ();
+	      		volume_down ();
 #endif
+		  }
 	    }
 	  if ((key & FN_F4) == FN_F4)
 	    {
+	       if (!checkConfig(FN_F4))
+	         {
 #ifdef HAVE_LIBXOSD
-	      flag = MOD_SOUND;
-	      sound = volume_up ();
-	      sendmsg (flag, brightness, sound);
+	      		flag = MOD_SOUND;
+	      		sound = volume_up ();
+	      		sendmsg (flag, brightness, sound);
 #else
-	      volume_up ();
+	      		volume_up ();
 #endif
+		 }	
+	    }
+	 /* NO built in commands */
+	  if ((key & FN_F7) == FN_F7)
+	    {
+		  checkConfig(FN_F7);
+	    }
+	  if ((key & FN_F10) == FN_F10)
+	    {
+		  checkConfig(FN_F10);
 	    }
 	  if ((key & FN_F12) == FN_F12)
 	    {
-	      if (fork () == 0)
-		{
-		  /*
-		   * that's my home made script for swsusp #!/bin/sh
-		   * sync echo "disk" > /sys/power/state 
-		   */
-		  if (execv ("/bin/hibernate", NULL) == -1)
-		    {
-		      syslog (LOG_NOTICE,"Cannot run /bin/hibernate: %m");
-		    }
-		}
+		 checkConfig(FN_F12);
 	    }
-	  /*
-	   * rest i still don't care 
-	   */
+	  if (( key & S1_BTN) == S1_BTN) 
+	    {
+		 checkConfig(S1_BTN);
+	    }
+	  if (( key & S2_BTN) == S2_BTN)
+	    {
+		 checkConfig(S2_BTN);
+	    }		  
 	}
-    }				// while
+    }// while
 }
 
 #ifdef HAVE_LIBXOSD
@@ -297,7 +360,9 @@ main (int argc, char *argv[])
   openlog("fsfn",LOG_CONS|LOG_NDELAY|LOG_PID,LOG_DAEMON);
 
   /* fill a default */
-  strncpy (devinput, "/dev/input/event0", 255);
+  //strncpy (devinput, "/dev/input/event0", 255);
+  
+  strncpy (devinput, getConfig(CFG_DEVICE), MAX_CFG_LENGTH);
 
   /* parse command line */
   while (0 == 0)

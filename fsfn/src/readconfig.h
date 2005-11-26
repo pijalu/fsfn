@@ -17,35 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef _READCONFIG_H_
+#define _READCONFIG_H_
+//#include <config.h>
 
-#ifndef _GENERIC_H_
-// keys 
-#define  FN_F2	1		// cut sound
-#define  FN_F3  2		// volume -
-#define  FN_F4  4		// volume +
-#define  FN_F5	8		// Brightness -
-#define  FN_F6	16		// Brightness +
-#define  FN_F7  32		// LCD/SCREEN
-#define  FN_F10 128		// Zoom in
-#define	 FN_F12 64		// Suspend
-#define  S2_BTN 4096		// S1 custom button
-#define	 S1_BTN 8192		// S2 custom button
+void loadConfig();
+void releaseConfig();
 
-#define  FN_INPUT_VALUE	245	// Fn key generate a 245 value
-#define  FN_INPUT_TYPE	4	// a 4 type
-#define  FN_INPUT_CODE	4	// and a 4 code
-
-// for readconfig
-#define MAX_CFG_LENGTH		255
-#define MAX_CFG_NAME_LENGTH 	20
+char* getConfig(int CONFIGCODE);
+#define USER_CONFIG_FILE	"/etc/fsfn.conf"
 
 
-#define	 CFG_DEVICE		900
-
-// The FS series seems to support 8 brightness levels
-#define MAX_BRIGHT 8
-#define MIN_BRIGHT 1
-
-// pidfile for deamon
-#define PID_FILE 	"/var/run/fsfn.pid"
 #endif
