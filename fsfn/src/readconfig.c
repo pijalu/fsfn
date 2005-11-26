@@ -54,7 +54,7 @@ void setDefConfig();
 
 // dirty trim
 char* strtrim(char* name) {
-	register int i=strlen(name);
+	register int i=strlen(name)-1;
 	
 	for (;i>0;--i) {
 		if (isspace(name[i])) {
@@ -72,6 +72,7 @@ char* strtrim(char* name) {
 void proceedConfig(char* name,char* value) {
 
 	// trim for any extra char
+	strtrim(name);
 	strtrim(value);
 	
 	if (strcasecmp(name,"DEVICE")==0) {
