@@ -1,0 +1,28 @@
+.TH "fsfn" 1
+.SH NAME
+fsfn \- Sony Vaio (FS series) laptop hotkey handler
+.SH SYNOPSIS
+.B fsfn
+[-hndo]
+.SH DESCRIPTION
+fsfn is a simple deamon/client allowing use of special sony vaio (FS series) keys. The deamon must be launched as super user and will executed all needed tasks. A graphical client can be launched using the -o or --osd option.
+
+.I NOTE
+fsfn uses a modified sony_acpi kernel module to function. In case of problems, be sure the right sony_acpi module is loaded. 
+.SH OPTIONS
+.TP
+.B \-h | --help
+Shows short help for fsfn switch
+.TP
+.B \-n | --nodeamon
+This command avoid deamonization of fsfn. This should only be used for debugging purpose
+.TP
+.B \-d | --device=<device>
+This command allows to change the default device (/dev/input/event0 or given in /etc/fsfn.conf)
+.TP
+.B \-o | --osd
+This command launch the X graphical client. It can be launched without any additional user rights. Please note: a fsfn deamon must be launched beforehand. 
+.SH "SEE ALSO"
+	fsfn (5)
+.SH BUGS
+	N.A.

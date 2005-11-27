@@ -1,0 +1,102 @@
+.TH "fsfn" 5
+.SH NAME
+fsfn \- Sony Vaio (FS series) laptop hotkey handler configuration file
+.SH SYNOPSIS
+.I /etc/fsfn.conf
+
+.SH DESCRIPTION
+fsfn reads configuration data from /etc/fsfn.conf. The file contains keyword-argument pairs, one per line. Lines starting with '#' and empty lines are interpreted as comments.
+
+.I NOTE
+Changed default actions for volume and/or brightness will not give OSD feedback.
+
+The possible keywords and their meanings are as follows (note that keywords are case-insensitive and arguments are case-sensitive)
+
+.TP
+.B DEVICE	
+Specifies the input device to use. Default to /dev/input/event0
+
+.TP
+.B OSD_VCOLOR	
+Specifies the OSD color for volume. Default to red
+
+.TP
+.B OSD_BCOLOR	
+Specifies the OSD color for brightness. Default to blue
+
+.TP
+.B OSD_FONT	
+Specifies the OSD font to use.
+
+Default to 
+.I -*-*-*-*-*-*-20-*-*-*-*-*-*-*
+
+.I NOTE	
+see 
+.B xfontsel
+for help to change this options
+
+.TP
+.B F2_CMD	
+This command allows to change the default action for
+.B Fn+F2
+to the command given.
+
+.TP
+.B F3_CMD	
+This command allows to change the default action for
+.B Fn+F3
+to the command given.
+
+.TP
+.B F4_CMD	
+This command allows to change the default action for
+.B Fn+F4
+to the command given.
+
+.TP
+.B F5_CMD	
+This command allows to change the default action for
+.B Fn+F5
+to the command given.
+
+.TP
+.B F6_CMD	
+This command allows to change the default action for
+.B Fn+F6
+to the command given.
+
+.TP
+.B F7_CMD	
+This command allows to set the default action for
+.B Fn+F7
+to the command given.
+
+.TP
+.B F10_CMD	
+This command allows to set the default action for
+.B Fn+F10
+to the command given.
+
+.TP
+.B F12_CMD	
+This command allows to set the default action for
+.B Fn+F12
+to the command given.
+
+.TP
+.B S1_CMD	
+This command allows to set the default action for
+.B Fn+S1
+to the command given.
+
+.TP
+.B S2_CMD	
+This command allows to set the default action for
+.B Fn+S2
+to the command given.
+
+.SH "SEE ALSO"
+	fsfn (1)
+.SH BUGS
+	N.A.
