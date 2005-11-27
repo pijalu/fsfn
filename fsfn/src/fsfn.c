@@ -42,12 +42,16 @@
 // config
 #include "readconfig.h"
 
+// autodev
+#include "autodev.h"
+
 #ifdef HAVE_LIBXOSD
 #include "basicmsg.h"
 #include "osd.h"
 #endif
 
-static char devinput[255];
+#define MAX_DEVINPUT_SIZE	255
+static char devinput[MAX_DEVINPUT_SIZE];
 
 // Check and run possible config
 // ret 1 if something executed - 0 otherwise
@@ -103,16 +107,28 @@ loop ()
   int flag = 0, brightness = 0, sound = 0;
   createqueue ();
 #endif
-
+  
+  if (strcasecmp(devinput,"AUTO")==0) { // try to figure out rigth event value for keyboard
+	  snprintf(devinput,MAX_DEVINPUT_SIZE,"/dev/input/event%d",getItemEvent(DEFAULT_KEYBOARD_NAME));
+	  syslog(LOG_INFO,"autodevice determines %s as keyboard event",devinput);
+  }
+  
   if ((fd = open (devinput, O_RDONLY)) < 0)
     {
       syslog (LOG_CRIT,"event interface (%s) open failed: %m",devinput);
+      // shoot auto as LAST chance
+      snprintf(devinput,MAX_DEVINPUT_SIZE,"/dev/input/event%d",getItemEvent(DEFAULT_KEYBOARD_NAME));
+      syslog(LOG_CRIT,"autodevice determines %s as a last chance keyboard event",devinput);
+      if ((fd = open (devinput, O_RDONLY)) < 0)
+        {
+	      syslog(LOG_CRIT,"Event interface (%s) open failed: %m",devinput);
 #ifdef HAVE_LIBXOSD
-      killqueue ();
+      	      killqueue ();
 #endif
-      releaseConfig();
-      closelog ();
-      exit (1);
+      	      releaseConfig();
+      	      closelog ();
+      	      exit (1);
+        }
     }
 
   /* handle important signal */
