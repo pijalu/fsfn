@@ -5,6 +5,7 @@
 
 depend() {
 	need localmount
+	use logger
 }
 
 checkconfig() {
