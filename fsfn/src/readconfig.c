@@ -50,7 +50,9 @@ typedef struct {
 	char OSD_BCOLOR[MAX_CFG_LENGTH];
 	char OSD_FONT[MAX_CFG_LENGTH];
 	// device
-	char DEVICE[MAX_CFG_LENGTH];	
+	char DEVICE[MAX_CFG_LENGTH];
+	// alsa name
+	char ALSA_NAME[MAX_CFG_LENGTH];
 } config_list;
 
 config_list* UserConfig=NULL;
@@ -100,6 +102,10 @@ void proceedConfig(char* name,char* value) {
 		syslog(LOG_INFO,"OSD_FONT=%s",UserConfig->OSD_FONT);
 	}
 #endif
+	else if (strcasecmp(name,"ALSA_NAME")==0) {
+		strncpy(UserConfig->ALSA_NAME,value,MAX_CFG_LENGTH);
+		syslog(LOG_INFO,"ALSA_NAME=%s",UserConfig->ALSA_NAME);
+	}
 	else if (strcasecmp(name,"F2_CMD")==0) {
 		strncpy(UserConfig->F2_CMD,value,MAX_CFG_LENGTH);
 		syslog(LOG_INFO,"F2_CMD=%s",UserConfig->F2_CMD);
@@ -153,6 +159,7 @@ void proceedConfig(char* name,char* value) {
 void setDefConfig() 
   {
 	strncpy(UserConfig->DEVICE,"/dev/input/event0",MAX_CFG_LENGTH);
+	strncpy(UserConfig->ALSA_NAME,"Front",MAX_CFG_LENGTH);
 	strncpy(UserConfig->F12_CMD,"/bin/hibernate",MAX_CFG_LENGTH);
 	strncpy(UserConfig->OSD_VCOLOR,"red",MAX_CFG_LENGTH);
 	strncpy(UserConfig->OSD_BCOLOR,"blue",MAX_CFG_LENGTH);
@@ -246,6 +253,7 @@ char* getConfig(int CONFIGCODE) {
 			case CFG_OSDVCOLOR: return UserConfig->OSD_VCOLOR;
 			case CFG_OSDBCOLOR: return UserConfig->OSD_BCOLOR;
 			case CFG_OSDFONT: return UserConfig->OSD_FONT;
+			case CFG_ALSA_NAME: return UserConfig->ALSA_NAME;
 			default: break;
 		}
 	}	

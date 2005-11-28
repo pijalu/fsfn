@@ -35,6 +35,8 @@
 #include <syslog.h>
 
 #include "alsasound.h"
+#include "generics.h"
+#include "readconfig.h"
 
 static char card[64] = "default";
 
@@ -94,7 +96,8 @@ int loadMixer() {
 		/* load sid */
 		snd_mixer_selem_id_alloca(&sid);
 		snd_mixer_selem_id_set_index(sid, 0);
-		snd_mixer_selem_id_set_name(sid,"Front");
+		//snd_mixer_selem_id_set_name(sid,"Front");
+		snd_mixer_selem_id_set_name(sid,getConfig(CFG_ALSA_NAME));
 		
 		/* load elem */
 		elem = snd_mixer_find_selem(handle, sid);

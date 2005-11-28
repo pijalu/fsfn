@@ -39,11 +39,11 @@
 #define MAX_CFG_LENGTH		255
 #define MAX_CFG_NAME_LENGTH 	20
 
-
 #define	 CFG_DEVICE		9000
 #define  CFG_OSDVCOLOR		9001
 #define  CFG_OSDBCOLOR		9002
 #define  CFG_OSDFONT		9003
+#define  CFG_ALSA_NAME		9004
 
 // The FS series seems to support 8 brightness levels
 #define MAX_BRIGHT 8
