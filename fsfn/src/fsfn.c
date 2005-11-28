@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
@@ -52,6 +53,16 @@
 
 #define MAX_DEVINPUT_SIZE	255
 static char devinput[MAX_DEVINPUT_SIZE];
+
+// one way out
+void cleanExit(int ret) {
+#ifdef HAVE_LIBXOSD
+	killqueue ();
+#endif
+	releaseConfig();
+	closelog();
+	exit(ret);	
+}
 
 // Check and run possible config
 // ret 1 if something executed - 0 otherwise
@@ -81,13 +92,7 @@ int checkConfig(int CONFIGCODE)
 /* signal handler */
 void signal_handler(sig)
 {
-	// only needed to clean
-#ifdef HAVE_LIBXOSD
-	killqueue ();
-#endif
-	releaseConfig();
-	closelog();
-	exit(0);
+	cleanExit(EXIT_FAILURE);
 }
 
 void
@@ -122,25 +127,20 @@ loop ()
       if ((fd = open (devinput, O_RDONLY)) < 0)
         {
 	      syslog(LOG_CRIT,"Event interface (%s) open failed: %m",devinput);
-#ifdef HAVE_LIBXOSD
-      	      killqueue ();
-#endif
-      	      releaseConfig();
-      	      closelog ();
-      	      exit (1);
-        }
+              cleanExit(EXIT_FAILURE);
+	}
     }
 
   /* handle important signal */
   if (signal(SIGTERM,signal_handler) < 0)
     {
       perror("signal");
-      exit(1);
+      exit(EXIT_FAILURE);
     }
   if (signal(SIGHUP,signal_handler) < 0)
     {
       perror("signal");
-      exit(1);
+      exit(EXIT_FAILURE);
     }
 
   syslog(LOG_INFO,"fsfn loaded");
@@ -153,19 +153,46 @@ loop ()
       /*
        * read the event interface 
        */
-      read_bytes = read (fd, ev, sizeof (struct input_event) * 64);
+      if ( (read_bytes = read (fd, ev, sizeof (struct input_event) * 64))==-1) {
+	      //fprintf(stderr,"Error: %d\n",errno);
+	      if (errno==ENODEV) { // event is now invalid ? must be back from sleep...
+		      syslog(LOG_NOTICE,"Start sleeping...");
+		      sleep(10);		      
+		      syslog(LOG_NOTICE,"End sleeping...");
 
+		      close(fd); // is this needed ??
+		      
+		      syslog(LOG_NOTICE,"Input device changed, back from suspend ?: %m");
+		      
+		      // get new event
+		      snprintf(devinput,MAX_DEVINPUT_SIZE,"/dev/input/event%d",getItemEvent(DEFAULT_KEYBOARD_NAME));
+      		      syslog(LOG_NOTICE,"autodevice determines %s as new event",devinput);
+		      
+		      // reopen - seems to be problems after a hibernate :(
+      		      if ((fd = open (devinput, O_RDONLY)) < 0)
+        	        {
+				syslog(LOG_CRIT,"New event interface (%s) open failed: %m",devinput); 
+				cleanExit(EXIT_FAILURE);
+			}
+		      // read it
+		      if ((read_bytes = read (fd, ev, sizeof (struct input_event) * 64))==-1) 
+		        {
+				syslog(LOG_CRIT,"Reading new device (%s) failed: %m",devinput);
+				cleanExit(EXIT_FAILURE);
+		        }
+	      }
+	      else {
+		      syslog(LOG_CRIT,"Input device reading failed: %m");
+		      cleanExit(EXIT_FAILURE);
+	      }
+	}
+      	
       if (read_bytes < (int) sizeof (struct input_event))
 	{
 	  syslog (LOG_CRIT,"short read: %m");
-#ifdef HAVE_LIBXOSD
-	  killqueue ();
-#endif
-      	  releaseConfig();
-	  closelog ();
-	  exit (1);
+	  cleanExit(EXIT_FAILURE);
 	}
-
+      
       /*
        * Loop for all readed events until we have something
        * interesting.. 
@@ -178,7 +205,7 @@ loop ()
 	    && (ev[i].code == FN_INPUT_CODE)
 	    && (ev[i].value == FN_INPUT_VALUE);
 	}
-
+      
       /*
        * If we got a FN event, plz do something... 
        */
@@ -332,11 +359,11 @@ deamonize ()
       
       if ((pidfile=open(PID_FILE,O_RDWR|O_CREAT,0640))<0) {
       	syslog(LOG_CRIT,"Failed to create pid file: %m");
-	exit(-1);
+	exit(EXIT_FAILURE);
       }
       if (lockf(pidfile,F_TLOCK,0)<0) {
 	      syslog(LOG_CRIT,"Failed to lock pid file: %m");
-	      exit(-1); /* can not lock */
+	      exit(EXIT_FAILURE); /* can not lock */
       }
       sprintf(str,"%d\n",getpid());
       write(pidfile,str,strlen(str)); /* record pid to lockfile */
@@ -345,7 +372,7 @@ deamonize ()
       break;
     case -1:
       perror ("Failed to deamonize");
-      exit (-1);
+      exit (EXIT_FAILURE);
     default:
       break;
     }
