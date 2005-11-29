@@ -24,7 +24,7 @@
 void loadConfig();
 void releaseConfig();
 
-char* getConfig(int CONFIGCODE);
+char* getConfig(char*);
 #define USER_CONFIG_FILE	"/etc/fsfn.conf"
 
 

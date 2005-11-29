@@ -97,7 +97,7 @@ int loadMixer() {
 		snd_mixer_selem_id_alloca(&sid);
 		snd_mixer_selem_id_set_index(sid, 0);
 		//snd_mixer_selem_id_set_name(sid,"Front");
-		snd_mixer_selem_id_set_name(sid,getConfig(CFG_ALSA_NAME));
+		snd_mixer_selem_id_set_name(sid,getConfig("ALSA_NAME"));
 		
 		/* load elem */
 		elem = snd_mixer_find_selem(handle, sid);

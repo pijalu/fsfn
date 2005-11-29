@@ -36,12 +36,12 @@
 #include "readconfig.h"
 
 // the volume osd color
-#define OSD_VCOLOR 	getConfig(CFG_OSDVCOLOR)
+#define OSD_VCOLOR 	getConfig("OSD_VCOLOR")
 // the brightness osd color
-#define OSD_BCOLOR 	getConfig(CFG_OSDBCOLOR)
+#define OSD_BCOLOR 	getConfig("OSD_BCOLOR")
 // the osd font... change the 7th position for size
 // or use xfontsel to explore the options
-#define OSD_FONT 	getConfig(CFG_OSDFONT)
+#define OSD_FONT 	getConfig("OSD_FONT")
 // the length of time the osd is shown
 #define OSD_TIME 3
 

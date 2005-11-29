@@ -31,34 +31,119 @@
 #include "readconfig.h"
 #include "generics.h"
 
-
-typedef struct {
+struct config_entry {
+	char* name;
+	char* value;
+} config_list[] = 
+{
 	// keys
-	char F2_CMD[MAX_CFG_LENGTH];
-	char F3_CMD[MAX_CFG_LENGTH];
-	char F4_CMD[MAX_CFG_LENGTH];
-	char F5_CMD[MAX_CFG_LENGTH];
-	char F6_CMD[MAX_CFG_LENGTH];
-	char F7_CMD[MAX_CFG_LENGTH];
-	char F10_CMD[MAX_CFG_LENGTH];
-	char F12_CMD[MAX_CFG_LENGTH];
-	char S1_CMD[MAX_CFG_LENGTH];
-	char S2_CMD[MAX_CFG_LENGTH];
-	// others
-	// osd
-	char OSD_VCOLOR[MAX_CFG_LENGTH];
-	char OSD_BCOLOR[MAX_CFG_LENGTH];
-	char OSD_FONT[MAX_CFG_LENGTH];
-	// device
-	char DEVICE[MAX_CFG_LENGTH];
-	// alsa name
-	char ALSA_NAME[MAX_CFG_LENGTH];
-} config_list;
+	{
+		.name = "F2_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F3_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F4_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F5_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F6_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F7_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F10_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "F12_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "S1_CMD",
+		.value = NULL,
+	},
+	{
+		.name = "S2_CMD",
+		.value = NULL,
+	},
+	// OSD
+	{
+		.name = "OSD_FONT",
+		.value = NULL,
+	},
+	{
+		.name = "OSD_VCOLOR",
+		.value = NULL,
+	},
+	{
+		.name = "OSD_BCOLOR",
+		.value = NULL,
+	},
+	// DEVICE
+	{
+		.name = "DEVICE",
+		.value = NULL,
+	},
+	// ALSA
+	{
+		.name = "ALSA_NAME",
+		.value = NULL,
+	},
+	{
+		.name = NULL
+	}
+};
 
-config_list* UserConfig=NULL;
-
+// def functions
+char* getConfigValue(char* key);
+int setConfigValue(char*key,char* value);
 void proceedConfig(char* name,char* value);
 void setDefConfig();
+char* strtrim(char* name);
+void loadConfig();
+void releaseConfig();
+char* getConfig(char* key);
+
+
+// get a config key
+char* getConfigValue(char* key) {
+	struct config_entry* it;
+	for (it=config_list; it->name ; it++) {
+		if (!strcasecmp(it->name,key)) {
+			return it->value;
+		}
+	}
+	return NULL;
+}
+
+// set a config key
+int setConfigValue(char*key,char* value) {
+	struct config_entry* it;
+	for (it=config_list; it->name ; it++) {
+		if (!strcasecmp(it->name,key)) {
+			if (it->value!=NULL) {
+				free(it->value);
+				it->value=NULL; // to keep clean...
+			}
+			it->value=(char*)malloc(strlen(value)+1);
+			strcpy(it->value,value);
+			return 1;
+		}
+	}
+	return -1;
+}
+
 
 
 // dirty trim
@@ -79,93 +164,33 @@ char* strtrim(char* name) {
 
 // store name/value for possible value
 void proceedConfig(char* name,char* value) {
-
 	// trim for any extra char
 	strtrim(name);
 	strtrim(value);
 	
-	if (strcasecmp(name,"DEVICE")==0) {
-		strncpy(UserConfig->DEVICE,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"DEVICE=%s",UserConfig->DEVICE);
-	}
-#ifdef HAVE_LIBXOSD
-	else if (strcasecmp(name,"OSD_VCOLOR")==0) {
-		strncpy(UserConfig->OSD_VCOLOR,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"OSD_VCOLOR=%s",UserConfig->OSD_VCOLOR);
-	}
-	else if (strcasecmp(name,"OSD_BCOLOR")==0) {
-		strncpy(UserConfig->OSD_BCOLOR,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"OSD_BCOLOR=%s",UserConfig->OSD_BCOLOR);
-	}
-	else if (strcasecmp(name,"OSD_FONT")==0) {
-		strncpy(UserConfig->OSD_FONT,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"OSD_FONT=%s",UserConfig->OSD_FONT);
-	}
-#endif
-	else if (strcasecmp(name,"ALSA_NAME")==0) {
-		strncpy(UserConfig->ALSA_NAME,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"ALSA_NAME=%s",UserConfig->ALSA_NAME);
-	}
-	else if (strcasecmp(name,"F2_CMD")==0) {
-		strncpy(UserConfig->F2_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F2_CMD=%s",UserConfig->F2_CMD);
-	}	
-	else if (strcasecmp(name,"F2_CMD")==0) {
-		strncpy(UserConfig->F2_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F2_CMD=%s",UserConfig->F2_CMD);
-	}
-	else if (strcasecmp(name,"F3_CMD")==0) {
-		strncpy(UserConfig->F3_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F3_CMD=%s",UserConfig->F3_CMD);
-	}
-	else if (strcasecmp(name,"F4_CMD")==0) {
-		strncpy(UserConfig->F4_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F4_CMD=%s",UserConfig->F4_CMD);
-	}
-	else if (strcasecmp(name,"F5_CMD")==0) {
-		strncpy(UserConfig->F5_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F5_CMD=%s",UserConfig->F5_CMD);
-	}
-	else if (strcasecmp(name,"F6_CMD")==0) {
-		strncpy(UserConfig->F6_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F6_CMD=%s",UserConfig->F6_CMD);
-	}
-	else if (strcasecmp(name,"F7_CMD")==0) {
-		strncpy(UserConfig->F7_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F7_CMD=%s",UserConfig->F7_CMD);
-	}
-	else if (strcasecmp(name,"F10_CMD")==0) {
-		strncpy(UserConfig->F10_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F10_CMD=%s",UserConfig->F10_CMD);
-	}
-	else if (strcasecmp(name,"F12_CMD")==0) {
-		strncpy(UserConfig->F12_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"F12_CMD=%s",UserConfig->F12_CMD);
-	}
-	else if (strcasecmp(name,"S1_CMD")==0) {
-		strncpy(UserConfig->S1_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"S1_CMD=%s",UserConfig->S1_CMD);
-	}
-	else if (strcasecmp(name,"S2_CMD")==0) {
-		strncpy(UserConfig->S2_CMD,value,MAX_CFG_LENGTH);
-		syslog(LOG_INFO,"S2_CMD=%s",UserConfig->S2_CMD);
+	if (setConfigValue(name,value)) {
+		syslog(LOG_INFO,"Configuration: %s=%s",name,value);
 	}
 	else {
-		syslog(LOG_NOTICE,"Unknow config entry:  %s=%s\n",name,value);
-	}
+		syslog(LOG_NOTICE,"Configuration: %s=%s is unknown",name,value);
+	}		
 }
 
 // set default value for config
 void setDefConfig() 
   {
-	strncpy(UserConfig->DEVICE,"/dev/input/event0",MAX_CFG_LENGTH);
-	strncpy(UserConfig->ALSA_NAME,"Front",MAX_CFG_LENGTH);
-	strncpy(UserConfig->F12_CMD,"/bin/hibernate",MAX_CFG_LENGTH);
-	strncpy(UserConfig->OSD_VCOLOR,"red",MAX_CFG_LENGTH);
-	strncpy(UserConfig->OSD_BCOLOR,"blue",MAX_CFG_LENGTH);
-	strncpy(UserConfig->OSD_FONT,"-*-*-*-*-*-*-20-*-*-*-*-*-*-*",MAX_CFG_LENGTH);
+	syslog(LOG_INFO,"Setting default configuration");
+	proceedConfig("DEVICE","AUTO");
+	proceedConfig("ALSA_NAME","Front");
+	proceedConfig("F12_CMD","/bin/hibernate");
+	proceedConfig("OSD_VCOLOR","red");
+	proceedConfig("OSD_BCOLOR","blue");
+	proceedConfig("OSD_FONT","-*-*-*-*-*-*-20-*-*-*-*-*-*-*");
+	syslog(LOG_INFO,"default configuration done");
   }
 
+// keep track of config loading state
+int _config_loaded=0;
 // load
 void loadConfig() {
 	FILE*	configFile;
@@ -173,15 +198,16 @@ void loadConfig() {
 	char 	name[MAX_CFG_LENGTH+MAX_CFG_NAME_LENGTH];
 	char	value[MAX_CFG_LENGTH+MAX_CFG_NAME_LENGTH];
 
+	// load if needed
+	if (_config_loaded) 
+		return;
+	// release previous config
+	releaseConfig();
+
+	_config_loaded=1; // set status as loaded
+
 	syslog(LOG_INFO,"Loading config file %s",USER_CONFIG_FILE);
 	
-	if (UserConfig==NULL) {
-		UserConfig=(config_list*) malloc(sizeof(config_list));
-	}
-
-	// reset
-	memset(UserConfig,0,sizeof(config_list));
-
 	// set default values
 	setDefConfig();	
 
@@ -224,38 +250,18 @@ void loadConfig() {
 
 // release 
 void releaseConfig() {
-	if (UserConfig!=NULL) {
-		free(UserConfig);
-	}	
+	struct config_entry* it;
+	for (it=config_list; it->name ; ++it) {
+		if (it->value) {
+			free(it->value);
+			it->value=NULL;
+		}
+	}
+	_config_loaded=0;
 }
 
 // return stored command - config 
-char* getConfig(int CONFIGCODE) {
-	if (UserConfig==NULL) {
-		loadConfig(); // proceed with config loading
-	}
-	// recheck in case of a config problems...
-	if (UserConfig!=NULL) {
-		switch(CONFIGCODE) {
-			// button commands
-			case FN_F2: return UserConfig->F2_CMD;
-			case FN_F3: return UserConfig->F3_CMD;	
-			case FN_F4: return UserConfig->F4_CMD;
-			case FN_F5: return UserConfig->F5_CMD;
-			case FN_F6: return UserConfig->F6_CMD;
-			case FN_F7: return UserConfig->F7_CMD;
-			case FN_F10: return UserConfig->F10_CMD;
-			case FN_F12: return UserConfig->F12_CMD;
-			case S1_BTN: return UserConfig->S1_CMD;
-			case S2_BTN: return UserConfig->S2_CMD;
-			// other configs
-			case CFG_DEVICE: return UserConfig->DEVICE;
-			case CFG_OSDVCOLOR: return UserConfig->OSD_VCOLOR;
-			case CFG_OSDBCOLOR: return UserConfig->OSD_BCOLOR;
-			case CFG_OSDFONT: return UserConfig->OSD_FONT;
-			case CFG_ALSA_NAME: return UserConfig->ALSA_NAME;
-			default: break;
-		}
-	}	
-	return NULL;
+char* getConfig(char* key) {
+	loadConfig();
+	return getConfigValue(key);
 }

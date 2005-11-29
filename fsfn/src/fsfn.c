@@ -66,12 +66,12 @@ void cleanExit(int ret) {
 
 // Check and run possible config
 // ret 1 if something executed - 0 otherwise
-int checkConfig(int CONFIGCODE) 
+int checkConfig(char* key) 
   {
 	char *buffer;
-	buffer=getConfig(CONFIGCODE);
+	buffer=getConfig(key);
 	
-	if (buffer[0]!='\0') {
+	if ((buffer)&&(buffer[0]!='\0')) {
 		syslog(LOG_NOTICE,"Executing [%s]",buffer);
 	 	if (fork () == 0)
 		{
@@ -84,7 +84,7 @@ int checkConfig(int CONFIGCODE)
 		return 1;
 	}
 	else {
-		syslog(LOG_INFO,"No config key");
+		syslog(LOG_INFO,"No config key for %s",key);
 	}
 	return 0;
   }
@@ -215,7 +215,7 @@ loop ()
 	  if ((key & FN_F5) == FN_F5)
 	    { 
 	      	// check config
-	      	if (!checkConfig(FN_F5))
+	      	if (!checkConfig("F5_CMD"))
 		  {
 	      		// lower brightness
 #ifdef HAVE_LIBXOSD
@@ -230,7 +230,7 @@ loop ()
 	  if ((key & FN_F6) == FN_F6)
 	    {
 	    	// check config
-		if (!checkConfig(FN_F6)) 
+		if (!checkConfig("F6_CMD")) 
 		  {
 		  	
 	    		// higher brightness
@@ -247,7 +247,7 @@ loop ()
 	  if ((key & FN_F2) == FN_F2)
 	    {
 		// check config
-		if (!checkConfig(FN_F2))
+		if (!checkConfig("F2_CMD"))
 		  {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
@@ -260,7 +260,7 @@ loop ()
 	    }
 	  if ((key & FN_F3) == FN_F3)
 	    {
-		if (!checkConfig(FN_F3))
+		if (!checkConfig("F3_CMD"))
 	          {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
@@ -273,7 +273,7 @@ loop ()
 	    }
 	  if ((key & FN_F4) == FN_F4)
 	    {
-	       if (!checkConfig(FN_F4))
+	       if (!checkConfig("F4_CMD"))
 	         {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
@@ -287,23 +287,23 @@ loop ()
 	 /* NO built in commands */
 	  if ((key & FN_F7) == FN_F7)
 	    {
-		  checkConfig(FN_F7);
+		  checkConfig("F7_CMD");
 	    }
 	  if ((key & FN_F10) == FN_F10)
 	    {
-		  checkConfig(FN_F10);
+		  checkConfig("F10_CMD");
 	    }
 	  if ((key & FN_F12) == FN_F12)
 	    {
-		 checkConfig(FN_F12);
+		 checkConfig("F12_CMD");
 	    }
 	  if (( key & S1_BTN) == S1_BTN) 
 	    {
-		 checkConfig(S1_BTN);
+		 checkConfig("S1_CMD");
 	    }
 	  if (( key & S2_BTN) == S2_BTN)
 	    {
-		 checkConfig(S2_BTN);
+		 checkConfig("S2_CMD");
 	    }		  
 	}
     }// while
@@ -405,7 +405,7 @@ main (int argc, char *argv[])
   /* fill a default */
   //strncpy (devinput, "/dev/input/event0", 255);
   
-  strncpy (devinput, getConfig(CFG_DEVICE), MAX_CFG_LENGTH);
+  strncpy (devinput, getConfig("DEVICE"), MAX_CFG_LENGTH);
 
   /* parse command line */
   while (0 == 0)
