@@ -2,7 +2,7 @@ AC_INIT
 AC_CONFIG_SRCDIR([configure.in])
 
 AC_CONFIG_HEADERS([config.h])
-AM_INIT_AUTOMAKE(fsfn, 0.3-r1)
+AM_INIT_AUTOMAKE(fsfn, 0.4-svn)
 
 dnl osd 
 # additional options
@@ -36,5 +36,5 @@ if test "x$enable_xosd" = "xyes"; then
   AM_CHECK_LIBXOSD
 fi
 
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile man/Makefile])
 AC_OUTPUT

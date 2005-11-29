@@ -14,15 +14,26 @@ The possible keywords and their meanings are as follows (note that keywords are 
 
 .TP
 .B DEVICE	
-Specifies the input device to use. Default to /dev/input/event0
+Specifies the input device to use. Setting it to   
+.B AUTO
+make fsfn try to figure out the correct device to use (BETA - NOT BY DEFAULT).
+Default to 
+.I /dev/input/event0
+
+.TP
+.B ALSA_NAME
+Specifies the mixer name to use for main volume. Default to 
+.I Front
 
 .TP
 .B OSD_VCOLOR	
-Specifies the OSD color for volume. Default to red
+Specifies the OSD color for volume. Default to 
+.I red
 
 .TP
 .B OSD_BCOLOR	
-Specifies the OSD color for brightness. Default to blue
+Specifies the OSD color for brightness. Default to 
+.I blue
 
 .TP
 .B OSD_FONT	
