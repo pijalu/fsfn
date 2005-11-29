@@ -1,0 +1,51 @@
+PREREQUISITE:
+=============
+a) patched sony_acpi:
+---------------------
+To use fsfn, please first compile and install sony_acpi kernel module. It's available at http://download.berlios.de/fsfn/sony_acpi.tar.gz .
+
+	wget http://download.berlios.de/fsfn/sony_acpi.tar.gz
+	tar zxvf sony_acpi.tar.gz
+	cd sony_acpi
+	make && sudo make install 
+
+Check if the module fit your kernel
+Code:
+
+	modprobe sony_acpi
+	ls /proc/acpi/sony
+
+You should see
+
+	brightness  brightness_default  fnkey
+
+If fine, add sony_acpi to your autoloaded modules (check documentation of your distribution if needed)
+
+b) xosd:
+--------
+You will need xosd if you want OSD output. see http://freshmeat.net/projects/xosd/ for informations.
+
+You can still compile/install and use fsfn without XOSD, using `--disable-xosd' configure flag (./configure --disable-xosd) but this is not recommended since you will miss a really sweet option of fsfn.
+
+INSTALLATION:
+=============
+Check INSTALL documents.
+
+USAGE:
+======
+See `man fsfn' and `man 5 fsfn' for usage.
+
+BUGS/PROBLEMS:
+==============
+Post them at http://developer.berlios.de/bugs/?group_id=4604
+
+LAST NOTE:
+==========
+Have fun with your laptop, and remember
+	
+	Computers are like air conditioners. 
+	Both stop working, if you open windows. 
+		-- Adam Heath
+
+
+ 

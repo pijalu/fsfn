@@ -105,6 +105,8 @@ find the X include and library files automatically, but if it doesn't,
 you can use the `configure' options `--x-includes=DIR' and
 `--x-libraries=DIR' to specify their locations.
 
+   If you don't want to use XOSD subsytem, use `--disable-xosd' configure option. 
+
 Specifying the System Type
 ==========================
 
