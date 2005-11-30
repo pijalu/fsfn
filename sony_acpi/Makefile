@@ -1,3 +1,8 @@
+#
+# Makefile for the Linux Wireless network device drivers.
+#
+# using bit's from makefile by Peter Johanson
+
 ifneq ($(KERNELRELEASE),)
 
 obj-m := sony_acpi.o
@@ -8,17 +13,46 @@ endif
 
 else
 
-KDIR := /lib/modules/$(shell uname -r)/build
+# KSRC should be set to the path to your sources
+# modules are installed into KMISC
+KVER  := $(shell uname -r)
+KSRC := /lib/modules/$(KVER)/build
+KMISC := /lib/modules/$(KVER)/kernel/drivers/acpi/
+KMISC_INC := /lib/modules/$(KVER)/include
+
+# KSRC_OUTPUT should be overridden if you are using a 2.6 kernel that
+# has it's output sent elsewhere via KBUILD_OUTPUT= or O=
+KSRC_OUTPUT := $(KSRC)
+
+VERFILE := $(KSRC_OUTPUT)/include/linux/version.h
+KERNELRELEASE := $(shell \
+	if [ -r $(VERFILE) ]; then \
+		(cat $(VERFILE); echo UTS_RELEASE) | \
+		$(CC) -I$(KSRC_OUTPUT) $(CFLAGS) -E - | \
+		tail -n 1 | \
+		xargs echo; \
+        else \
+		uname -r; \
+	fi)
+
+MODPATH := $(DESTDIR)/lib/modules/$(KERNELRELEASE)
 PWD := $(shell pwd)
 
-default:
-	$(MAKE) -C $(KDIR) SUBDIRS=$(PWD) modules
+default: modules
 
-endif
+modules:
+	$(MAKE) -C $(KSRC) SUBDIRS=$(PWD) modules
 
 install:
-	cp sony_acpi.ko /lib/modules/$(shell uname -r)/kernel/drivers/acpi/
-	depmod -a
+#install -d $(KMISC)
+	install -m 644 -c sony_acpi.ko $(KMISC)
+	/sbin/depmod -a
+
+uninstall:
+	rm -rf $(addprefix $(KMISC),sony_acpi.ko)
+	/sbin/depmod -a
+
+endif
 
 clean:
 	rm -rf *.[oas] .*.flags *.ko .*.cmd .*.d .*.tmp *.mod.c .tmp_versions
