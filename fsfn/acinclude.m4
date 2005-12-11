@@ -670,7 +670,7 @@ AC_DEFUN([AM_LC_MESSAGES],
 dnl AM_PATH_LIBXOSD([ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]])
 dnl Test to see if libxosd is installed, and define LIBXOSD_CFLAGS, LIBXOSDLIBS
 dnl
-AC_DEFUN(AM_PATH_LIBXOSD,
+AC_DEFUN([AM_PATH_LIBXOSD],
 [dnl
 dnl Get the cflags and libraries from the xosd-config script
 dnl
@@ -694,7 +694,7 @@ AC_SUBST(LIBXOSD_LIBS)
 ])
 dnl AM_CHECK_LIBXOSD
 dnl Checks for LIBXOSD (>= 1.0.0)
-AC_DEFUN(AM_CHECK_LIBXOSD,
+AC_DEFUN([AM_CHECK_LIBXOSD],
 [
   if test ! x$xosd_libdir = x; then
       LIBS="$LIBS -L$xosd_libdir"

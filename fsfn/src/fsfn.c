@@ -479,3 +479,98 @@ main (int argc, char *argv[])
     }
   return EXIT_SUCCESS;
 }
+
+/* Manual page:
+
+=pod
+
+=head1 NAME
+
+fsfn - Sony Vaio (FS series) laptop hotkey handler
+
+=head1 SYNOPSIS
+
+B<fsfn> [ -hndo ]
+
+=head1 DESCRIPTION
+
+fsfn is a simple daemon and client allowing use of special Sony Vaio
+(FS series) keys. The daemon must be launched as super user.  To start
+fsfn(1) as a graphical client, use the B<-o> or B<--osd> option.
+
+The fsfn(1) program reads various parameters from its configuration
+file upon start up.  See L</FILES> and L<fsfn(5)>.
+
+=head1 OPTIONS
+
+=over
+
+=item B<-h>, B<--help>
+
+The B<-h> option will cause fsfn(1) to print command line usage
+information and then exit.
+
+=item B<-n>, B<--nodaemon>
+
+The B<-n> option will cause the fsfn(1) program will run in the
+foreground.  This option is used for debugging purposes.
+
+=item B<-d> I<device>, B<--device>=I<device>
+
+The B<-d> option directs fsfn(1) to the appropriate keyboard event
+device.  If this option is omitted, it will default to the value
+`AUTO'.  You probably want the default.
+
+=item B<-o>, B<--osd>
+
+The B<-o> option will cause fsfn(1) to run in X client mode.  This
+option is invalid, if the fsfn(1) daemon is not running.  You probably
+want to run fsfn(1) with the B<-o> option when your desktop is
+started.
+
+=back
+
+=head1 FILES
+
+=over
+
+=item F</dev/input/eventN>
+
+The fsfn(1) daemon uses an input event handler to catch the Sony Fn
+key presses.  The interface to this kernel event is through an
+appropriate /dev/input node.  The correct node can change when a
+hotplug event is processed.  If you start fsfn(1) with the B<-d>
+B<AUTO> option, the daemon will determine the appropriate node to use.
+You can override this by specifying the path for the node you want the
+daemon to use.
+
+This node can change after a suspend/wake cycle.  You probably want to
+shut down fsfn(1) before suspending and start it after wake up.  This
+will have the effect of stopping the fsfn(1) client, if it is running.
+
+=item F</etc/fsfn.conf>
+
+The fsfn(1) program reads various parameters from this file when it
+starts up as a daemon or as a client.  See L<fsfn(5)> for the format
+of this file.
+
+=back
+
+=head1 SEE ALSO
+
+fsfn(5)
+
+=head1 BUGS
+
+Please submit bug reports to
+S<L<http://developer.berlios.de/bugs/?group_id=4604>> .
+
+=head1 AUTHOR
+
+Pierre Poissinger E<lt>pierre.poissinger@gmail.comE<gt>
+
+Spencer Shimko E<lt>spencer@beyondabstraction.netE<gt>
+
+=cut
+
+ */

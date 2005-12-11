@@ -1,0 +1,197 @@
+# vim: ts=8 sts=4 sw=4 noet syntax=pod
+#
+# $Id$
+#
+# Copyright (c) 2005, Pierre Poissinger
+# <pierre.poissinger@gmail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the
+# Free Software Foundation, Inc.,
+# 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+=pod
+
+=head1 NAME
+
+fsfn - Sony Vaio (FS series) laptop hotkey handler configuration file
+
+=head1 SYNOPSIS
+
+F</etc/fsfn.conf>
+
+=head1 DESCRIPTION
+
+fsfn(1) reads configuration data from F</etc/fsfn.conf>. The file
+contains keyword-argument pairs, one per line.  Lines starting with
+`#' and empty lines are interpreted as comments.
+
+=head1 FORMAT
+
+The possible keywords and their meanings are described below.  Note
+that keywords are case-insensitive and arguments are case-sensitive.
+
+=over
+
+=item B<DEVICE>
+
+The B<DEVICE> keyword specifies the input device to use (for example,
+F</dev/input/event0>).  Setting this keyword to B<AUTO> will allow
+fsfn(1) to find the correct keyboard device automatically.
+
+Default: B<AUTO>.
+
+=item B<ALSA_NAME>
+
+The B<ALSA_NAME> keyword is used to specify the audio mixer name to
+use.
+
+Default: B<Front>.
+
+=item B<OSD_VCOLOR>
+
+The B<OSD_VCOLOR> keyword is used to specify the OSD color for the
+volume display.
+
+Default: B<red>
+
+=item B<OSD_BCOLOR>
+
+The B<OSD_BCOLOR> keyword is used to specify the OSD color for the
+brightness display.
+
+Default: B<blue>
+
+=item B<OSD_FONT>
+
+The B<OSD_FONT> keyword is used to specify the OSD font for volume and
+brightness displays.  See L<xfontsel(1)> for help changing this
+option.
+
+Default: B<-*-*-*-*-*-*-20-*-*-*-*-*-*-*>
+
+=item B<F2_CMD>
+
+The B<F2_CMD> keyword is used to specify alternate action for the
+E<lt>Fn+F2E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: The fsfn(1) program will turn off the laptop speaker.
+
+=item B<F3_CMD>
+
+The B<F3_CMD> keyword is used to specify alternate action for the
+E<lt>Fn+F3E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: The fsfn(1) program will lower the laptop speaker volume one
+step.
+
+=item B<F4_CMD>
+
+The B<F4_CMD> keyword is used to specify alternate action for the
+E<lt>Fn+F4E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: The fsfn(1) program will raise the laptop speaker volume one
+step.
+
+=item B<F5_CMD>
+
+The B<F5_CMD> keyword is used to specify alternate action for the
+E<lt>Fn+F5E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: The fsfn(1) program will lower the laptop LCD brightness one
+step.
+
+=item B<F6_CMD>
+
+The B<F6_CMD> keyword is used to specify alternate action for the
+E<lt>Fn+F6E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: The fsfn(1) program will raise the laptop LCD brightness one
+step.
+
+=item B<F7_CMD>
+
+The B<F7_CMD> keyword is used to specify action for the
+E<lt>Fn+F7E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: No action.
+
+=item B<F10_CMD>
+
+The B<F10_CMD> keyword is used to specify action for the
+E<lt>Fn+F10E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: No action.
+
+=item B<F12_CMD>
+
+The B<F12_CMD> keyword is used to specify action for the
+E<lt>Fn+F12E<gt> key press.  The value should be a path to an
+executable program.
+
+Default: No action.
+
+=item B<S1_CMD>
+
+The B<S1_CMD> keyword is used to specify action for the
+E<lt>S1E<gt> key press.  The value should be a path to an
+executable program.
+
+=item B<S2_CMD>
+
+The B<S2_CMD> keyword is used to specify action for the
+E<lt>S2E<gt> key press.  The value should be a path to an
+executable program.
+
+=back
+
+=head1 EXAMPLE
+
+  DEVICE=AUTO
+  OSD_VCOLOR=green
+  OSD_BCOLOR=yellow
+  OSD_FONT=-*-lucida-*-*-*-*-24-*-*-*-*-*-iso8859-1
+  F12_CMD=/usr/local/bin/my_hibernate
+
+=head1 FILES
+
+=over
+
+=item F</etc/fsfn.conf>
+
+=back
+
+=head1 SEE ALSO
+
+fsfn(1), xfontsel(1)
+
+=head1 BUGS
+
+Please submit bug reports to
+S<L<http://developer.berlios.de/bugs/?group_id=4604>> .
+
+=head1 AUTHOR
+
+Pierre Poissinger E<lt>pierre.poissinger@gmail.comE<gt>
+
+Spencer Shimko E<lt>spencer@beyondabstraction.netE<gt>
+
+=cut
+
