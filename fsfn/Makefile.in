@@ -149,7 +149,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 SUBDIRS = src
-EXTRA_DIST = gentoo/fsfn debian/fsfn etc/fsfn.conf
+EXTRA_DIST = gentoo/fsfn debian/fsfn etc/fsfn.conf fedora/fsfn
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -341,7 +341,7 @@ distclean-tags:
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkdir_p) $(distdir)/debian $(distdir)/etc $(distdir)/gentoo
+	$(mkdir_p) $(distdir)/debian $(distdir)/etc $(distdir)/fedora $(distdir)/gentoo
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \
