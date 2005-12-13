@@ -28,7 +28,7 @@ src_compile () {
 	if use xosd; then
 		einfo
 		einfo "xosd support built in"
-		einfo "To enable it, please add 'fsfn -i' to your x session"
+		einfo "To enable it, please add 'fsfn -o' to your x session"
 		einfo
 	fi
 
