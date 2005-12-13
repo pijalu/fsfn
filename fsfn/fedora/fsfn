@@ -64,7 +64,7 @@ restart)
 	restart
 	;;
 condrestart)
-	if [ -f /var/lock/subsys/acpid ]; then
+	if [ -f /var/lock/subsys/fsfn ]; then
 	    restart
 	fi
 	;;
