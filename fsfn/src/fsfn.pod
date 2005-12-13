@@ -146,7 +146,7 @@ The B<F12_CMD> keyword is used to specify action for the
 E<lt>Fn+F12E<gt> key press.  The value should be a path to an
 executable program.
 
-Default: No action.
+Default: F</bin/hibernate>
 
 =item B<S1_CMD>
 
