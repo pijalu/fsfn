@@ -127,7 +127,7 @@ sendmsg (int flag, int brightness_level, int sound_level)
   msg.data.brightness_level = brightness_level;
   msg.data.sound_level = sound_level;
 
-  if ((msgsnd (msgqueue_id, (struct msgbuf *) &msg,
+  if ((msgsnd (msgqueue_id, (const void*) &msg,
 	       sizeof (struct infodata), 0)) == -1)
     {
       syslog (LOG_CRIT,"Failed to send message: %m");
@@ -142,7 +142,7 @@ getmsg (int *flag, int *brightness_level, int *sound_level)
   struct basicmsg msg;
 
   msg.mtype = MSG_TYPE_INFO;
-  if (msgrcv (msgqueue_id, (struct msgbuf *) &msg,
+  if (msgrcv (msgqueue_id, (void*) &msg,
 	      sizeof (struct infodata), MSG_TYPE_INFO, 0) == -1)
     {
       syslog (LOG_NOTICE,"Failed to get message: %m");

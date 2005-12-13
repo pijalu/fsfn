@@ -2,8 +2,8 @@
 #
 # $Id$
 #
-# Copyright (c) 2005, Pierre Poissinger
-# <pierre.poissinger@gmail.com>
+# Copyright (c) 2005, Garry Williams 
+# <gtwilliams@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -192,6 +192,8 @@ S<L<http://developer.berlios.de/bugs/?group_id=4604>> .
 Pierre Poissinger E<lt>pierre.poissinger@gmail.comE<gt>
 
 Spencer Shimko E<lt>spencer@beyondabstraction.netE<gt>
+
+Garry Williams E<lt><gtwilliams@gmail.com>E<gt>
 
 =cut
 

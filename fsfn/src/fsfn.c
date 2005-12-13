@@ -83,9 +83,6 @@ int checkConfig(char* key)
 		}
 		return 1;
 	}
-	else {
-		syslog(LOG_INFO,"No config key for %s",key);
-	}
 	return 0;
   }
 
@@ -211,7 +208,6 @@ loop ()
        */
       if (hasSomething && (key = getCodes ()))
 	{
-	  syslog(LOG_INFO,"fsfn catch %d",key);
 	  if ((key & FN_F5) == FN_F5)
 	    { 
 	      	// check config
@@ -570,6 +566,8 @@ S<L<http://developer.berlios.de/bugs/?group_id=4604>> .
 Pierre Poissinger E<lt>pierre.poissinger@gmail.comE<gt>
 
 Spencer Shimko E<lt>spencer@beyondabstraction.netE<gt>
+
+Garry Williams E<lt><gtwilliams@gmail.com>E<gt>
 
 =cut
 
