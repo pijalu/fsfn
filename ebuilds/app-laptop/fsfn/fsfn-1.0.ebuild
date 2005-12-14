@@ -12,7 +12,7 @@ IUSE="xosd"
 
 DEPEND="
 	xosd? ( >=x11-libs/xosd-2.2.0 )
-	>=app-misc/sonyacpi-0.1
+	>=app-laptop/sonyacpi-0.1
 	dev-lang/perl
 "
 
