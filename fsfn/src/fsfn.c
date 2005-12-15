@@ -51,6 +51,8 @@
 #include "osd.h"
 #endif
 
+#define SOUND_STEP	getConfigInt("SOUND_STEP") //mod by SilSha
+
 #define MAX_DEVINPUT_SIZE	255
 static char devinput[MAX_DEVINPUT_SIZE];
 
@@ -247,10 +249,10 @@ loop ()
 		  {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
-	      		sound = mute ();
+	      		sound = mute (SOUND_STEP);
 	      		sendmsg (flag, brightness, sound);
 #else
-	      		mute ();			
+	      		mute (SOUND_STEP);			
 #endif
 		  }
 	    }
@@ -260,10 +262,10 @@ loop ()
 	          {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
-	      		sound = volume_down ();
+	      		sound = volume_down (SOUND_STEP);	//mod by SilSha
 	      		sendmsg (flag, brightness, sound);
 #else
-	      		volume_down ();
+	      		volume_down (SOUND_STEP);
 #endif
 		  }
 	    }
@@ -273,10 +275,10 @@ loop ()
 	         {
 #ifdef HAVE_LIBXOSD
 	      		flag = MOD_SOUND;
-	      		sound = volume_up ();
+	      		sound = volume_up (SOUND_STEP);		//mod by SilSha
 	      		sendmsg (flag, brightness, sound);
 #else
-	      		volume_up ();
+	      		volume_up (SOUND_STEP);
 #endif
 		 }	
 	    }

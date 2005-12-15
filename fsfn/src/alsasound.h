@@ -23,8 +23,8 @@
 
 int get_volume(int *value);
 int set_volume(int *value);
-int volume_up();
-int volume_down();
-int mute();
+int volume_up(int step);	//mod by SilSha
+int volume_down(int step);
+int mute(int step);
 
 #endif

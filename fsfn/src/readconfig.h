@@ -25,6 +25,11 @@ void loadConfig();
 void releaseConfig();
 
 char* getConfig(char*);
+int   getConfigInt(char* key); // same as previous, but return an int
+int   getConfigValueBool(char* key); // same as previous, but return a bool
+
+int   setConfig(char* key,char* value); // set a config
+
 #define USER_CONFIG_FILE	"/etc/fsfn.conf"
 
 

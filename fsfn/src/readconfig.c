@@ -34,71 +34,113 @@
 struct config_entry {
 	char* name;
 	char* value;
+	int*  ivalue; // to hold possible int 
 } config_list[] = 
 {
 	// keys
 	{
 		.name = "F2_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F3_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F4_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F5_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F6_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F7_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F10_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "F12_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "S1_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "S2_CMD",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	// OSD
 	{
 		.name = "OSD_FONT",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "OSD_VCOLOR",
 		.value = NULL,
+		.ivalue = NULL, 
+	},
+	{
+		.name = "OSD_VCOLORZ",
+		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = "OSD_BCOLOR",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
+	{
+		.name = "OSD_TIMEOUT",
+		.value = NULL,
+		.ivalue = NULL, 
+	},
+	{
+		.name = "OSD_MSG_BRIGHT",
+		.value = NULL,
+		.ivalue = NULL, 
+	},
+	{
+		.name = "OSD_MSG_VOLUME",
+		.value = NULL,
+		.ivalue = NULL, 
+	},
+
 	// DEVICE
 	{
 		.name = "DEVICE",
 		.value = NULL,
+		.ivalue = NULL, 
 	},
 	// ALSA
 	{
 		.name = "ALSA_NAME",
 		.value = NULL,
+		.ivalue = NULL, 
+	},
+	{
+		.name = "SOUND_STEP",	/*mode by SilSha*/
+		.value = NULL,
+		.ivalue = NULL, 
 	},
 	{
 		.name = NULL
@@ -127,6 +169,21 @@ char* getConfigValue(char* key) {
 	return NULL;
 }
 
+int getConfigValueInt(char* key) {
+	struct config_entry* it;
+	for (it=config_list; it->name; it++) {
+		if (!strcasecmp(it->name,key)) {
+			if (it->ivalue==NULL) { // lazy convert
+				it->ivalue = (int*) malloc(sizeof(int));
+				it->ivalue[0] = atoi(it->value);
+			}
+			return it->ivalue[0];
+		}
+	}
+
+	return 0;
+}
+
 // set a config key
 int setConfigValue(char*key,char* value) {
 	struct config_entry* it;
@@ -136,8 +193,14 @@ int setConfigValue(char*key,char* value) {
 				free(it->value);
 				it->value=NULL; // to keep clean...
 			}
-			it->value=(char*)malloc(strlen(value)+1);
-			strcpy(it->value,value);
+			if (it->ivalue!=NULL) { // clean int buffer
+				free(it->ivalue);
+				it->ivalue=NULL;
+			}
+			if (value!=NULL) { // only if value is not null
+				it->value=(char*)malloc(strlen(value)+1);
+				strcpy(it->value,value);
+			}
 			return 1;
 		}
 	}
@@ -182,10 +245,13 @@ void setDefConfig()
 	syslog(LOG_INFO,"Setting default configuration");
 	proceedConfig("DEVICE","AUTO");
 	proceedConfig("ALSA_NAME","Front");
+	proceedConfig("SOUND_STEP","10");		/*mod by SilSha*/
 	proceedConfig("F12_CMD","/bin/hibernate");
 	proceedConfig("OSD_VCOLOR","red");
+	proceedConfig("OSD_VCOLORZ","red");
 	proceedConfig("OSD_BCOLOR","blue");
 	proceedConfig("OSD_FONT","-*-*-*-*-*-*-20-*-*-*-*-*-*-*");
+	proceedConfig("OSD_TIMEOUT","3");
 	syslog(LOG_INFO,"default configuration done");
   }
 
@@ -256,6 +322,10 @@ void releaseConfig() {
 			free(it->value);
 			it->value=NULL;
 		}
+		if (it->ivalue) {
+			free(it->ivalue);
+			it->ivalue=NULL;
+		}
 	}
 	_config_loaded=0;
 }
@@ -264,4 +334,14 @@ void releaseConfig() {
 char* getConfig(char* key) {
 	loadConfig();
 	return getConfigValue(key);
+}
+
+int getConfigInt(char* key) {
+	loadConfig();
+	return getConfigValueInt(key);
+}
+
+int setConfig(char* key,char* value) {
+	loadConfig();
+	return setConfigValue(key,value);
 }

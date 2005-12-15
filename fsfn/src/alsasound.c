@@ -194,34 +194,30 @@ set_volume (int *value)
 }
 
 int
-volume_up ()
+volume_up (int step)
 {
   int value = 0;
 
   get_volume (&value);
 
-  if (value < 100)
-  {
-	  if (value > 90) {
-		value=100;
-	  }
-  	  else value += 10;
-  }
+//rewritten by SilSha
+  if (value <= 100-step)
+	value += step;
   else
-    value = 100;
+	value=100;
 
   return set_volume (&value);
 }
 
 int
-volume_down ()
+volume_down (int step)
 {
   int value = 0;
 
   get_volume (&value);
 
-  if (value > 9)
-    value -= 10;
+  if (value >= step)
+    value -= step; //mod by SilSha
   else
     value = 0;
 
@@ -230,7 +226,7 @@ volume_down ()
 
 static int oldvalue;
 int
-mute ()
+mute (int step)	//mod by SilSha
 {
   int value;
 
@@ -251,7 +247,7 @@ mute ()
 
   if (!oldvalue)
     {
-      return volume_up ();
+      return volume_up (step);	//mod by SilSha
     }
 
   return set_volume (&oldvalue);

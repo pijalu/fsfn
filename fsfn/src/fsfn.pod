@@ -58,10 +58,22 @@ use.
 
 Default: B<Front>.
 
+=item B<SOUND_STEP>
+
+The B<SOUND_STEP> keyword is used to specify the incrementation/decrementation to use in volume change. It is exprimed in percent.
+
+Default:B<10>
+
 =item B<OSD_VCOLOR>
 
 The B<OSD_VCOLOR> keyword is used to specify the OSD color for the
 volume display.
+
+Default: B<red>
+
+=item B<OSD_VCOLORZ>
+
+The B<OSD_VCOLORZ> keyword is used to specify the OSD color for a muted volume display.
 
 Default: B<red>
 
@@ -79,6 +91,25 @@ brightness displays.  See L<xfontsel(1)> for help changing this
 option.
 
 Default: B<-*-*-*-*-*-*-20-*-*-*-*-*-*-*>
+
+=item B<OSD_TIMEOUT>
+
+The B<OSD_TIMEOUT> keyword is used to specifiy the OSD timeout exprimed in seconds
+
+Default: B<3>
+
+=item B<OSD_MSG_VOLUME>
+
+The B<OSD_MSG_VOLUME> keyword allows to set a non-standard OSD volume message. The special value B<%d> will be replaced by the current volume. 
+
+Default: B<Volume>
+
+=item B<OSD_MSG_BRIGHT>
+
+The B<OSD_MSG_BRIGHT> keyword allows to set a non-standard OSD brightness message. The special value B<%d> will be replaced by the current brightness. 
+
+Default: B<Brightness>
+
 
 =item B<F2_CMD>
 
@@ -166,8 +197,10 @@ executable program.
 
   DEVICE=AUTO
   OSD_VCOLOR=green
+  OSD_VCOLORZ=red
   OSD_BCOLOR=yellow
   OSD_FONT=-*-lucida-*-*-*-*-24-*-*-*-*-*-iso8859-1
+  OSD_MSG_VOLUME=Volume (%d)
   F12_CMD=/usr/local/bin/my_hibernate
 
 =head1 FILES
