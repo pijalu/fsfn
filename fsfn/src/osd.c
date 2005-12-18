@@ -100,14 +100,19 @@ validate_osd_message(char* message) {
 				continue; 
 			}
 			else {
-				if (message[i+1]!='d') {
+				if ((message[i+1]!='d')&&(message[i+1]!='%')) {
 					return 0; // a non escaped non dec. ==> incorrect
 				}
-				count++;
-				if (count > 1) { // more than 1
-					return 0;
+				else {
+					if (message[i+1]=='d') {
+						count++;
+					}
+					if (count > 1) { // more than 1
+						return 0;
+					}
 				}
 			}
+			i++;
 		}
 	}
 	return 1;

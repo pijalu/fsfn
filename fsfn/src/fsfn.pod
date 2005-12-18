@@ -100,7 +100,7 @@ Default: B<3>
 
 =item B<OSD_MSG_VOLUME>
 
-The B<OSD_MSG_VOLUME> keyword allows to set a non-standard OSD volume message. The special value B<%d> will be replaced by the current volume. 
+The B<OSD_MSG_VOLUME> keyword allows to set a non-standard OSD volume message. The special value B<%d> will be replaced by the current volume. (To include a % sign, use %%) 
 
 Default: B<Volume>
 
