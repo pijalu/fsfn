@@ -142,6 +142,18 @@ struct config_entry {
 		.value = NULL,
 		.ivalue = NULL, 
 	},
+	// SET DEFAULT device aswell
+	{
+		.name = "BRT_SETDEFAULT", 
+		.value = NULL,
+		.ivalue = NULL,
+	}, 
+	// HACK for FSJ
+	{
+		.name = "BRT_HACK_FJS",
+		.value = NULL,
+		.ivalue = NULL,
+	},
 	{
 		.name = NULL
 	}
@@ -166,6 +178,8 @@ char* getConfigValue(char* key) {
 			return it->value;
 		}
 	}
+
+	syslog(LOG_NOTICE,"%s value not found",key);
 	return NULL;
 }
 
@@ -180,7 +194,8 @@ int getConfigValueInt(char* key) {
 			return it->ivalue[0];
 		}
 	}
-
+	
+	syslog(LOG_NOTICE,"%s value not found",key);
 	return 0;
 }
 
@@ -204,6 +219,8 @@ int setConfigValue(char*key,char* value) {
 			return 1;
 		}
 	}
+	
+	syslog(LOG_NOTICE,"%s value not found",key);
 	return -1;
 }
 
@@ -252,6 +269,8 @@ void setDefConfig()
 	proceedConfig("OSD_BCOLOR","blue");
 	proceedConfig("OSD_FONT","-*-*-*-*-*-*-20-*-*-*-*-*-*-*");
 	proceedConfig("OSD_TIMEOUT","3");
+	proceedConfig("BRT_SETDEFAULT","0"); 		// force new default value
+	proceedConfig("BRT_HACK_FJS","0");
 	syslog(LOG_INFO,"default configuration done");
   }
 

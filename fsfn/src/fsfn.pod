@@ -191,6 +191,18 @@ The B<S2_CMD> keyword is used to specify action for the
 E<lt>S2E<gt> key press.  The value should be a path to an
 executable program.
 
+=item B<BRT_SETDEFAULT>
+
+The B<BRT_SETDEFAULT> keyword is used to specify if the default brightness should be set with brightness. The value should be 0 for no, 1 for yes.
+
+Default: 0
+
+=item B<BRT_HACK_FJS>
+
+The B<BRT_HACK_FJS> keyword is used to specify if fsfn should use a workaround for setting brightness on your laptop. The value should be 0 (to not use) or the value to use as default brightness (from 1 to 8).
+
+Default: 0
+
 =back
 
 =head1 EXAMPLE

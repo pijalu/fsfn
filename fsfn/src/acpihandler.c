@@ -30,9 +30,12 @@
 #include <fcntl.h>
 #include <syslog.h>
 
+#include "readconfig.h"
 #include "acpihandler.h"
 #include "generics.h"
 
+
+int _brightness=-1; /* for FSJ laptops (they don't return current brightness) */
 /*
  * Return current brightness of the screen 
  */
@@ -41,6 +44,16 @@ getBrightness ()
 {
   FILE *handle;
   int ret;
+
+  if (getConfigInt("BRT_HACK_FJS"))
+  {
+	syslog (LOG_NOTICE,"FSJ HACK:current brightness %d",_brightness); 
+	if (_brightness < 0) 
+	{
+		_brightness=getConfigInt("BRT_HACK_FJS");
+	}
+	return _brightness;
+  }
 
   if ((handle = fopen ("/proc/acpi/sony/brightness", "rb")) == NULL)
     {
@@ -53,9 +66,10 @@ getBrightness ()
       exit (-1);
     }
   fclose (handle);
-  return ret;
 
+  return ret;
 }
+
 
 /*
  * Set the current brightness of the screen 
@@ -82,10 +96,33 @@ setBrightness (int b)
     }
   if (fprintf (handle, "%d", b) != 1)
     {
-      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
+      syslog (LOG_CRIT,"Error writing /proc/acpi/sony/brightness: %m");
       exit (-1);
     }
   fclose (handle);
+
+  if (getConfigInt("BRT_SETDEFAULT")) 
+    {
+	  syslog (LOG_INFO,"Writing to default brigthness");
+	  if ((handle = fopen ("/proc/acpi/sony/brightness_default", "wb")) == NULL)
+		{
+		  syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness_default: %m");
+		  exit (-1);
+		}
+	  if (fprintf (handle, "%d", b) != 1)
+		{
+		  syslog (LOG_CRIT,"Error writing /proc/acpi/sony/brightness_default: %m");
+		  exit (-1);
+		}
+	  fclose (handle);
+    }
+  
+  if (getConfigInt("BRT_HACK_FJS")) 
+    {
+		syslog (LOG_NOTICE,"FSJ HACK: brightnes set to %d",b); 
+		_brightness=b; // store new value
+    }
+
   return b;
 }
 
@@ -100,12 +137,12 @@ getCodes ()
   int ret;
   if ((handle = fopen ("/proc/acpi/sony/fnkey", "rb")) == NULL)
     {
-      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
+      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/fnkey: %m");
       exit (-1);
     }
   if (fscanf (handle, "%d", &ret) != 1)
     {
-      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
+      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/fnkey: %m");
       exit (-1);
     }
   fclose (handle);
