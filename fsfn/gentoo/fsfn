@@ -20,7 +20,7 @@ start() {
 	start-stop-daemon --start \
 		--nicelevel 10 \
 		--pidfile /var/run/fsfn.pid \
-		-x "/usr/local/bin/fsfn"
+		-x "/usr/bin/fsfn"
 	eend $?
 }
 

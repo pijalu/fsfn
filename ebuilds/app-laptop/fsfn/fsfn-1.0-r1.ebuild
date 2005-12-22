@@ -18,7 +18,12 @@ DEPEND="
 
 src_unpack() {
 	unpack ${A}
-	cd ${S}	
+	cd ${S}
+	
+	# fix dir for bug 5951
+	sed -i \
+		-e "s:/usr/local/bin:/usr/bin:g" \
+		${S}/gentoo/fsfn
 }
 
 src_compile () {
