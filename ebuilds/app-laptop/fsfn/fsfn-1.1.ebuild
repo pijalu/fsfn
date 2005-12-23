@@ -39,9 +39,8 @@ src_compile () {
 
 src_install() {
 	make DESTDIR="${D}" install || die "Installation failed!"
-	cd ${S}/gentoo
-	exeinto /etc/init.d/
-	newexe ${S}/gentoo/fsfn fsfn || die
+	doinitd gentoo/fsfn
+	newconfd gentoo/fsfn-conf fsfn
 	
 	einfo
 	einfo "You can use /etc/init.d/fsfn script to start fsfn"

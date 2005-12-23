@@ -21,6 +21,10 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
+if [ -f /etc/sysconfig/fsfn ]; then
+        . /etc/sysconfig/fsfn
+fi
+
 RETVAL=0
 
 start() {
@@ -32,6 +36,13 @@ start() {
 	    [ $RETVAL -eq 0 ] && touch /var/lock/subsys/fsfn
 	    echo
 	fi
+	
+	if [ -n "${SCANCODE}" ] && [ -n "${KEYCODE}" ] ; then
+	    echo -n $"Suppressing function key kernel output: "
+	    /usr/bin/setkeycodes "${SCANCODE}" "${KEYCODE}"
+		echo
+	fi
+	
 	return $RETVAL
 }
 

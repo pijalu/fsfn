@@ -22,6 +22,12 @@ start() {
 		--pidfile /var/run/fsfn.pid \
 		-x "/usr/bin/fsfn"
 	eend $?
+	
+	if [ -n "${SCANCODE}" ] && [ -n "${KEYCODE}" ] ; then
+		ebegin "Suppressing function key kernel output"
+		/usr/bin/setkeycodes "${SCANCODE}" "${KEYCODE}"
+		eend $?
+	fi
 }
 
 stop() {

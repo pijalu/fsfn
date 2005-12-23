@@ -4,6 +4,8 @@
 
 PATH=/sbin:/bin
 
+if [ -r /etc/default/fsfn ]; then . /etc/default/fsfn; fi
+
 . /lib/lsb/init-functions
 
 if ! test -e /proc/acpi/sony/fnkey ; then
@@ -19,6 +21,12 @@ case "$1" in
                     --pidfile /var/run/fsfn.pid \
                     -x "/usr/local/bin/fsfn"
         log_end_msg $?
+		
+        if [ -n "${SCANCODE}" ] && [ -n "${KEYCODE}" ] ; then
+                log_begin_msg "Suppressing function key kernel output"
+                /usr/bin/setkeycodes "${SCANCODE}" "${KEYCODE}"
+                log_end_msg $?
+        fi
     ;;
     stop)
         log_begin_msg "Stopping fsfn key handler"
