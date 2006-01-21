@@ -315,23 +315,22 @@ looposd ()
 
   osd_load ();
 
-  loadqueue ();
+  if (loadqueue ()!=-1) {
+	while (1 == 1) {
+		  
+		  if (getmsg (&flag, &brightness, &sound)==-1) {
+			break; // exit the loop if problems
+          }
 
-  while (1 == 1)
-    {
-      if (getmsg (&flag, &brightness, &sound)==-1) {
-      	break; // exit the loop if problems
-      }
-
-      if (flag & MOD_BRIGHTNESS)
-	{
-	  osd_brightness (brightness);
-	}
-      if (flag & MOD_SOUND)
-	{
-	  osd_volume (sound);
-	}
-    }
+		  if (flag & MOD_BRIGHTNESS) {
+	        osd_brightness (brightness);
+	      }
+          
+		  if (flag & MOD_SOUND) {
+			osd_volume (sound);
+		  }
+    }// while 1
+  }
 
   osd_unload ();
 }

@@ -92,16 +92,17 @@ loadqueue ()
 {
   if (msgqueue_id != -1)
     {				/* no need */
-      return 1;
+      return EXIT_SUCCESS;
     }
-  if ((msgqueue_id = msgget (genkey (), 0666)) == -1)
+  else if ((msgqueue_id = msgget (genkey (), 0666)) == -1)
     {
       syslog (LOG_CRIT,"Cannot create IPC message queue: %m");
-      syslog (LOG_NOTICE,"fsfn client cannot find fsfn deamon:");
-      syslog (LOG_NOTICE,"Please be sure you first started fsfn as deamon.");
-      syslog (LOG_NOTICE,"(Note: To start deamon, run fsfn as root "
-	      "without -o option.)");
-      exit (-1);
+
+      fprintf(stderr,"fsfn client cannot find fsfn deamon:\n");
+      fprintf(stderr,"Please be sure you first started fsfn as deamon.\n");
+      fprintf(stderr,"(Note: To start deamon, run fsfn as root "
+	      "without -o option.)\n");
+      return -1;
     }
   return EXIT_SUCCESS;
 }
