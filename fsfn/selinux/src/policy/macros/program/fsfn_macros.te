@@ -1,0 +1,50 @@
+define(`can_use_fsfn',`
+type $1_fsfn_t, domain, privlog;
+
+domain_auto_trans($1_t, fsfn_exec_t, $1_fsfn_t)
+ifelse($2,`',`
+role $1_r types $1_fsfn_t;
+',`
+role $2_r types $1_fsfn_t;
+')
+
+read_locale($1_fsfn_t)
+read_sysctl($1_fsfn_t)
+uses_shlib($1_fsfn_t)
+x_client_domain($1_fsfn, $1)
+
+allow $1_fsfn_t self:process { execmem fork sigkill signal };
+allow $1_fsfn_t fsfn_t:msgq { unix_read unix_write associate read };
+allow $1_fsfn_t fsfn_t:msg receive;
+
+allow $1_t $1_fsfn_t:process signal;
+
+allow $1_fsfn_t xdm_xserver_t:unix_stream_socket connectto;
+
+allow $1_fsfn_t { root_t usr_t tmp_t etc_t proc_t }:dir search;
+allow $1_fsfn_t $1_home_dir_t:dir search;
+
+allow $1_fsfn_t self:fifo_file read;
+allow $1_fsfn_t self:unix_dgram_socket connect;
+allow $1_fsfn_t self:unix_stream_socket getattr;
+
+allow $1_t fsfn_exec_t:file rx_file_perms;
+allow $1_fsfn_t root_t:dir search;
+allow $1_fsfn_t device_t:dir search;
+allow $1_fsfn_t devlog_t:sock_file write;
+allow $1_fsfn_t etc_t:file r_file_perms;
+allow $1_fsfn_t home_root_t:dir search;
+allow $1_fsfn_t proc_acpi_t:dir getattr;
+allow $1_fsfn_t $1_devpts_t:chr_file { read write };
+allow $1_fsfn_t $1_xauth_home_t:file getattr;
+allow $1_fsfn_t syslogd_t:unix_stream_socket connectto;
+allow $1_fsfn_t null_device_t:chr_file read;
+allow $1_fsfn_t $1_home_t:dir read;
+
+allow $1_fsfn_t proc_acpi_t:dir search;
+allow $1_fsfn_t self:fifo_file write;
+allow $1_fsfn_t self:tcp_socket create;
+allow $1_fsfn_t self:unix_dgram_socket create;
+allow $1_fsfn_t self:unix_stream_socket read;
+allow $1_fsfn_t $1_xauth_home_t:file read;
+')

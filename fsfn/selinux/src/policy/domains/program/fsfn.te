@@ -1,0 +1,37 @@
+# Policy for the fsfn daemon for sony vaio laptops
+# Author:  Spencer Shimko <spencer@beyondabstraction.net>
+
+#################################
+#
+# Rules for the hald_t domain.
+#
+# hald_exec_t is the type of the hald executable.
+#
+daemon_domain(fsfn)
+
+allow fsfn_t { etc_t }:file { getattr read };
+
+allow fsfn_t initrc_var_run_t:file rw_file_perms;
+allow fsfn_t usr_t:file r_file_perms;
+
+allow fsfn_t proc_acpi_t:dir r_dir_perms;
+allow fsfn_t proc_acpi_t:file rw_file_perms;
+allow fsfn_t proc_t:file read;
+
+allow fsfn_t self:msgq { create destroy unix_write write enqueue };
+allow fsfn_t self:msg { send receive };
+
+allow fsfn_t self:{ unix_dgram_socket unix_stream_socket } create_socket_perms;
+
+# read events
+allow fsfn_t event_device_t:chr_file read;
+
+# change the volume
+allow fsfn_t sound_device_t:chr_file rw_file_perms;
+
+# ran by init
+allow init_t fsfn_t:dir search;
+allow init_t fsfn_exec_t:file getattr;
+allow init_t fsfn_t:lnk_file read;
+
+allow fsfn_t tty_device_t:chr_file { read write };
