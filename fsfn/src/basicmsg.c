@@ -32,6 +32,8 @@
 
 /* Message def */
 #define MSG_TYPE_INFO	1
+#define MSG_TYPE_CMD    2
+
 struct infodata
 {
   int flag;			/* flag - contains modification flag */
@@ -41,8 +43,14 @@ struct infodata
 
 struct basicmsg
 {
-  long mtype;			/* type of the message - currently only one */
+  long mtype;			/* type of the message */
   struct infodata data;		/* link to struc containing data */
+};
+
+struct cmdmsg
+{
+  long mtype;			/* type of the message */
+  int  cmd_code;		/* command code */
 };
 
 /* helpers code */
@@ -153,5 +161,39 @@ getmsg (int *flag, int *brightness_level, int *sound_level)
   *brightness_level = msg.data.brightness_level;
   *sound_level = msg.data.sound_level;
 
+  return EXIT_SUCCESS;
+}
+
+int
+sendcmd(int cmd)
+{
+  struct cmdmsg msg;
+  
+  msg.mtype = MSG_TYPE_CMD;
+  msg.cmd_code = cmd;
+
+  if ((msgsnd(msgqueue_id, (const void*) &msg,
+	      sizeof(int), 0)) == -1)
+    {
+      syslog (LOG_CRIT,"Failed to send message: %m");
+      exit(-1);
+    }
+  return EXIT_SUCCESS;
+}
+
+int 
+getcmd(int* cmd)
+{
+  struct cmdmsg msg;
+  
+  msg.mtype = MSG_TYPE_CMD;
+  if (msgrcv(msgqueue_id, (void*) &msg,
+	     sizeof (struct infodata), MSG_TYPE_CMD, 0) == -1)
+    {
+      syslog (LOG_NOTICE,"Failed to get message: %m");
+      return -1;
+    }
+  *cmd = msg.cmd_code;
+  
   return EXIT_SUCCESS;
 }

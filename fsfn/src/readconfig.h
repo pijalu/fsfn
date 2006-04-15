@@ -22,6 +22,7 @@
 //#include <config.h>
 
 void loadConfig();
+void loadUserConfig();
 void releaseConfig();
 
 char* getConfig(char*);
@@ -30,7 +31,7 @@ int   getConfigValueBool(char* key); // same as previous, but return a bool
 
 int   setConfig(char* key,char* value); // set a config
 
-#define USER_CONFIG_FILE	"/etc/fsfn.conf"
-
+#define MAIN_CONFIG_FILE	"/etc/fsfn.conf"
+#define USER_CONFIG_FILE        ".fsfn.conf"
 
 #endif

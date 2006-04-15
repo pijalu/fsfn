@@ -220,6 +220,7 @@ loop ()
 	      		flag = MOD_BRIGHTNESS;
 	      		brightness = setBrightness (getBrightness () - 1);
 	      		sendmsg (flag, brightness, sound);
+			sendcmd (FN_F5);
 #else
 	      		setBrightness (getBrightness () - 1);
 #endif
@@ -236,6 +237,7 @@ loop ()
 	      		flag = MOD_BRIGHTNESS;
 	      		brightness = setBrightness (getBrightness () + 1);
 	      		sendmsg (flag, brightness, sound);
+			sendcmd (FN_F6);
 #else
 	      		setBrightness (getBrightness () + 1);
 #endif
@@ -251,6 +253,7 @@ loop ()
 	      		flag = MOD_SOUND;
 	      		sound = mute (SOUND_STEP);
 	      		sendmsg (flag, brightness, sound);
+			sendcmd(FN_F2);
 #else
 	      		mute (SOUND_STEP);			
 #endif
@@ -264,6 +267,7 @@ loop ()
 	      		flag = MOD_SOUND;
 	      		sound = volume_down (SOUND_STEP);	//mod by SilSha
 	      		sendmsg (flag, brightness, sound);
+			sendcmd(FN_F3);
 #else
 	      		volume_down (SOUND_STEP);
 #endif
@@ -277,6 +281,7 @@ loop ()
 	      		flag = MOD_SOUND;
 	      		sound = volume_up (SOUND_STEP);		//mod by SilSha
 	      		sendmsg (flag, brightness, sound);
+			sendcmd(FN_F4);
 #else
 	      		volume_up (SOUND_STEP);
 #endif
@@ -285,23 +290,48 @@ loop ()
 	 /* NO built in commands */
 	  if ((key & FN_F7) == FN_F7)
 	    {
-		  checkConfig("F7_CMD");
+#ifdef HAVE_LIBXOSD
+	      if (!checkConfig("F7_CMD"))
+		sendcmd(FN_F7);
+#else
+	      sendcmd(FN_F7);
+#endif
 	    }
 	  if ((key & FN_F10) == FN_F10)
 	    {
-		  checkConfig("F10_CMD");
+#ifdef HAVE_LIBXOSD
+	      if(!checkConfig("F10_CMD"))
+		sendcmd(FN_F10);
+#else
+	      sendcmd(FN_F10);
+#endif
 	    }
 	  if ((key & FN_F12) == FN_F12)
 	    {
-		 checkConfig("F12_CMD");
+#ifdef HAVE_LIBXOSD
+	      if (!checkConfig("F12_CMD"))
+		sendcmd(FN_F12);
+#else
+	      checkConfig("F12_CMD");
+#endif
 	    }
 	  if (( key & S1_BTN) == S1_BTN) 
 	    {
-		 checkConfig("S1_CMD");
+#ifdef HAVE_LIBXOSD
+	      if (!checkConfig("S1_CMD"))
+		sendcmd(S1_BTN);
+#else
+	      checkConfig("S1_CMD");
+#endif
 	    }
 	  if (( key & S2_BTN) == S2_BTN)
 	    {
-		 checkConfig("S2_CMD");
+#ifdef HAVE_LIBXOSD
+	      if (!checkConfig("S2_CMD"))
+		sendcmd(S2_BTN);
+#else
+	      checkConfig("S2_CMD");
+#endif
 	    }		  
 	}
     }// while
@@ -309,26 +339,66 @@ loop ()
 
 #ifdef HAVE_LIBXOSD
 void
+loopcmd()
+{
+  int cmd;
+  if (loadqueue ()!=-1) {
+    while (1 == 1) {
+      if (getcmd(&cmd)==-1) {
+	break;
+      }
+      
+      switch(cmd) {
+      case FN_F5: checkConfig("F5_CMD"); break;
+      case FN_F6: checkConfig("F6_CMD"); break;
+      case FN_F2: checkConfig("F2_CMD"); break;
+      case FN_F3: checkConfig("F3_CMD"); break;
+      case FN_F4: checkConfig("F4_CMD"); break;
+      case FN_F7: checkConfig("F7_CMD"); break;
+      case FN_F10:checkConfig("F10_CMD"); break;
+      case FN_F12:checkConfig("F12_CMD"); break;
+      case S1_BTN:checkConfig("S1_CMD"); break;
+      case S2_BTN:checkConfig("S2_CMD"); break;
+      default:
+	syslog(LOG_INFO,"Unknow cmd send: %d\n",cmd);
+	break;
+      }
+      
+    }
+  }
+}
+  
+
+void
 looposd ()
 {
   int flag = 0, brightness = 0, sound = 0;
 
+  /* Load user def */
+  loadUserConfig();
+
+  /* Fork OSD to loop on cmd msg */
+  if (fork()==0) {
+    loopcmd();
+    exit(0);
+  }
+
   osd_load ();
 
   if (loadqueue ()!=-1) {
-	while (1 == 1) {
+    while (1 == 1) {
 		  
-		  if (getmsg (&flag, &brightness, &sound)==-1) {
-			break; // exit the loop if problems
-          }
+      if (getmsg (&flag, &brightness, &sound)==-1) {
+	break; // exit the loop if problems
+      }
 
-		  if (flag & MOD_BRIGHTNESS) {
-	        osd_brightness (brightness);
-	      }
+      if (flag & MOD_BRIGHTNESS) {
+	osd_brightness (brightness);
+      }
           
-		  if (flag & MOD_SOUND) {
-			osd_volume (sound);
-		  }
+      if (flag & MOD_SOUND) {
+	osd_volume (sound);
+      }
     }// while 1
   }
 
@@ -545,7 +615,7 @@ This node can change after a suspend/wake cycle.  You probably want to
 shut down fsfn(1) before suspending and start it after wake up.  This
 will have the effect of stopping the fsfn(1) client, if it is running.
 
-=item F</etc/fsfn.conf>
+=item F</etc/fsfn.conf>, F<~/.fsfn.conf> (only OSD)
 
 The fsfn(1) program reads various parameters from this file when it
 starts up as a daemon or as a client.  See L<fsfn(5)> for the format

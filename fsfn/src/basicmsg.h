@@ -30,5 +30,7 @@ void killqueue();
 int sendmsg(int flag,int brightness_level,int sound_level);
 int getmsg(int* flag,int* brightness_level,int* sound_level);
 
+int sendcmd(int cmd);
+int getcmd(int* cmd);
 
 #endif

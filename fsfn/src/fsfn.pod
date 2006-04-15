@@ -28,13 +28,17 @@ fsfn - Sony Vaio (FS series) laptop hotkey handler configuration file
 
 =head1 SYNOPSIS
 
-F</etc/fsfn.conf>
+F</etc/fsfn.conf> , F<~/.fsfn.conf> (only OSD client)
 
 =head1 DESCRIPTION
 
 fsfn(1) reads configuration data from F</etc/fsfn.conf>. The file
 contains keyword-argument pairs, one per line.  Lines starting with
-`#' and empty lines are interpreted as comments.
+`#' and empty lines are interpreted as comments. The OSD client will 
+also read informations from F<~/.fsfn.conf> and overwrites duplicates.
+OSD client will be notice of actions only if daemon is not configured 
+to handle it. 
+E.g: If you want a "user space" action, set it ONLY in F<~/.fsfn.conf>  
 
 =head1 FORMAT
 

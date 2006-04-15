@@ -276,29 +276,18 @@ void setDefConfig()
 
 // keep track of config loading state
 int _config_loaded=0;
-// load
-void loadConfig() {
+// load config helper
+void loadConfigSub(char* filename) {
 	FILE*	configFile;
 	char	buffer[MAX_CFG_LENGTH+MAX_CFG_NAME_LENGTH];
 	char 	name[MAX_CFG_LENGTH+MAX_CFG_NAME_LENGTH];
 	char	value[MAX_CFG_LENGTH+MAX_CFG_NAME_LENGTH];
 
-	// load if needed
-	if (_config_loaded) 
-		return;
-	// release previous config
-	releaseConfig();
-
-	_config_loaded=1; // set status as loaded
-
-	syslog(LOG_INFO,"Loading config file %s",USER_CONFIG_FILE);
-	
-	// set default values
-	setDefConfig();	
+	syslog(LOG_INFO,"Loading config file %s",filename);
 
 	// read
-	if ((configFile=fopen(USER_CONFIG_FILE,"r"))==NULL) {
-		syslog(LOG_NOTICE,"error opening config file");
+	if ((configFile=fopen(filename,"r"))==NULL) {
+		syslog(LOG_NOTICE,"error opening config file: %m");
 		return;
 	}
 	while(fgets(buffer,255,configFile)!=NULL) {
@@ -331,6 +320,33 @@ void loadConfig() {
 		}
 	}
 	fclose(configFile);
+}
+
+void loadConfig() {
+  if (_config_loaded) // load if needed
+    return;
+  releaseConfig(); // release previous config
+  setDefConfig(); // load default
+  loadConfigSub(MAIN_CONFIG_FILE);
+  _config_loaded=1;
+}
+
+void loadUserConfig() {
+  char* path;
+  int maxsize=strlen(getenv("HOME"))+1+strlen(USER_CONFIG_FILE)+1+1; // get needed string size = $HOME+/+USER_CONFIG_FILE
+
+  /* Create full path name to user config*/
+  path=(char*) malloc(maxsize);
+  strncpy(path,getenv("HOME"),maxsize);
+  strncat(path,"/",maxsize);
+  strncat(path,USER_CONFIG_FILE,maxsize);
+  
+  if (!_config_loaded) /* previous config not yet loaded */
+    loadConfig(); /* load it then */
+  loadConfigSub(path);
+
+  /* free used pointer */
+  free(path);
 }
 
 // release 
