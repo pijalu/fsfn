@@ -10,6 +10,11 @@ AC_ARG_ENABLE(xosd,
 	      [  --disable-xosd          Do not try to test for libxosd],
 	      enable_xosd=no,
 	      enable_xosd=yes)
+dnl moreconf
+AC_ARG_ENABLE(moreconf,
+	      [  --enable-moreconf       Enable more configurations],
+	      enable_moreconf=yes,
+	      enable_moreconf=no)
 
 dnl Default checks
 AC_LANG([C])
@@ -32,6 +37,15 @@ CFLAGS="$CFLAGS $X_CFLAGS -Wall"
 if test "x$enable_xosd" = "xyes"; then
   AM_PATH_LIBXOSD(AC_DEFINE(HAVE_LIBXOSD))
   AM_CHECK_LIBXOSD
+fi
+
+#more conf
+AC_MSG_CHECKING([if advanced configuration is required])
+if test "x$enable_moreconf" = "xyes"; then
+   AC_DEFINE(USE_MORECONF,[],[Use advanced configuration settings])
+   AC_MSG_RESULT([yes])
+else
+   AC_MSG_RESULT([no])
 fi
 
 # Checks for pod2man

@@ -846,6 +846,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --disable-xosd          Do not try to test for libxosd
+  --enable-moreconf       Enable more configurations
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-alsatest      Do not try to compile and run a test Alsa program
@@ -1753,6 +1754,13 @@ if test "${enable_xosd+set}" = set; then
   enable_xosd=no
 else
   enable_xosd=yes
+fi;
+# Check whether --enable-moreconf or --disable-moreconf was given.
+if test "${enable_moreconf+set}" = set; then
+  enableval="$enable_moreconf"
+  enable_moreconf=yes
+else
+  enable_moreconf=no
 fi;
 
 ac_ext=c
@@ -5119,6 +5127,22 @@ rm -f conftest.err conftest.$ac_objext \
       conftest$ac_exeext conftest.$ac_ext
   fi
 
+fi
+
+#more conf
+echo "$as_me:$LINENO: checking if advanced configuration is required" >&5
+echo $ECHO_N "checking if advanced configuration is required... $ECHO_C" >&6
+if test "x$enable_moreconf" = "xyes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define USE_MORECONF
+_ACEOF
+
+   echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+   echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
 fi
 
 # Checks for pod2man

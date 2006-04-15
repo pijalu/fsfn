@@ -36,12 +36,12 @@
 // input thing
 #include <linux/input.h>
 
+// config
+#include "readconfig.h"
+
 #include "generics.h"
 #include "acpihandler.h"
 #include "alsasound.h"
-
-// config
-#include "readconfig.h"
 
 // autodev
 #include "autodev.h"
@@ -347,7 +347,19 @@ loopcmd()
       if (getcmd(&cmd)==-1) {
 	break;
       }
-      
+#ifdef USE_MORECONF      
+      if (cmd==FN_F5)	    checkConfig("F5_CMD");
+      else if (cmd==FN_F6) checkConfig("F6_CMD");
+      else if (cmd==FN_F2)  checkConfig("F2_CMD");
+      else if (cmd==FN_F3)  checkConfig("F3_CMD");
+      else if (cmd==FN_F4)  checkConfig("F4_CMD"); 
+      else if (cmd==FN_F7)  checkConfig("F7_CMD");
+      else if (cmd==FN_F10) checkConfig("F10_CMD");
+      else if (cmd==FN_F12) checkConfig("F12_CMD");
+      else if (cmd==S1_BTN) checkConfig("S1_CMD");
+      else if (cmd==S2_BTN) checkConfig("S2_CMD");
+      else syslog(LOG_INFO,"Unknow cmd send: %d\n",cmd); 
+#else
       switch(cmd) {
       case FN_F5: checkConfig("F5_CMD"); break;
       case FN_F6: checkConfig("F6_CMD"); break;
@@ -363,7 +375,7 @@ loopcmd()
 	syslog(LOG_INFO,"Unknow cmd send: %d\n",cmd);
 	break;
       }
-      
+#endif
     }
   }
 }
@@ -457,6 +469,9 @@ usage (char *thisfile)
     ("\t-d, --device=inputdevice\tUse given device to handle fn keys, default: /dev/input/event0\n");
 #ifdef HAVE_LIBXOSD
   printf ("\t-o, --osd\t\t\tStart as OSD deamon client\n");
+#ifdef USE_MORECONF
+  printf ("(MORECONF enabled)\n");
+#endif
 #endif
 }
 

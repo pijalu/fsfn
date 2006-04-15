@@ -207,6 +207,16 @@ The B<BRT_HACK_FJS> keyword is used to specify if fsfn should use a workaround f
 
 Default: 0
 
+=item B<FN_F2>,B<FN_F3>,B<FN_F4>,B<FN_F5>,B<FN_F6>,B<FN_F7>,B<FN_F10>,B<FN_F12>,B<S1_BTN>,B<S2_BTN>,B<FN_INPUT_VALUE>,B<FN_INPUT_TYPE>,B<FN_INPUT_CODE>
+
+(Only if fsfn was compiled with B<--enable-moreconf> configure flag)
+These items allows redefinition of keycodes used by fsfn to handle FN+keys on some newer Vaio laptops. 
+These options should B<NOT> be used unless the laptop is B<NOT> supported out of the box by fsfn. 
+
+Example: the B<Vaio VGN-FJ170/B> needs the following entries:
+FN_F10=1024
+FN_INPUT_VALUE=246
+
 =back
 
 =head1 EXAMPLE

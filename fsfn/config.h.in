@@ -82,6 +82,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Use advanced configuration settings */
+#undef USE_MORECONF
+
 /* Version number of package */
 #undef VERSION
 

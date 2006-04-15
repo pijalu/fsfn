@@ -32,132 +32,205 @@
 #include "generics.h"
 
 struct config_entry {
-	char* name;
-	char* value;
-	int*  ivalue; // to hold possible int 
+  char* name;
+  char* value;
+  int*  ivalue; // to hold possible int 
 } config_list[] = 
-{
-	// keys
-	{
-		.name = "F2_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F3_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F4_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F5_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F6_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F7_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F10_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "F12_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "S1_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "S2_CMD",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	// OSD
-	{
-		.name = "OSD_FONT",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_VCOLOR",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_VCOLORZ",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_BCOLOR",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_TIMEOUT",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_MSG_BRIGHT",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "OSD_MSG_VOLUME",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
+  {
+#ifdef USE_MORECONF
+    // keys definition
+    {
+      .name = "FN_INPUT_VALUE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_INPUT_TYPE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_INPUT_CODE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_INPUT_VALUE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F2",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F3",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F4",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F5",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F6",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F7",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F10",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "FN_F12",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "S1_BTN",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "S2_BTN",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+#endif
+    // keys action
+    {
+      .name = "F2_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F3_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F4_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F5_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F6_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F7_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F10_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "F12_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "S1_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "S2_CMD",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    // OSD
+    {
+      .name = "OSD_FONT",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_VCOLOR",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_VCOLORZ",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_BCOLOR",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_TIMEOUT",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_MSG_BRIGHT",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "OSD_MSG_VOLUME",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
 
-	// DEVICE
-	{
-		.name = "DEVICE",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	// ALSA
-	{
-		.name = "ALSA_NAME",
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	{
-		.name = "SOUND_STEP",	/*mode by SilSha*/
-		.value = NULL,
-		.ivalue = NULL, 
-	},
-	// SET DEFAULT device aswell
-	{
-		.name = "BRT_SETDEFAULT", 
-		.value = NULL,
-		.ivalue = NULL,
-	}, 
-	// HACK for FSJ
-	{
-		.name = "BRT_HACK_FJS",
-		.value = NULL,
-		.ivalue = NULL,
-	},
-	{
-		.name = NULL
-	}
-};
+    // DEVICE
+    {
+      .name = "DEVICE",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    // ALSA
+    {
+      .name = "ALSA_NAME",
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    {
+      .name = "SOUND_STEP",	/*mode by SilSha*/
+      .value = NULL,
+      .ivalue = NULL, 
+    },
+    // SET DEFAULT device aswell
+    {
+      .name = "BRT_SETDEFAULT", 
+      .value = NULL,
+      .ivalue = NULL,
+    }, 
+    // HACK for FSJ
+    {
+      .name = "BRT_HACK_FJS",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = NULL
+    }
+  };
 
 // def functions
 char* getConfigValue(char* key);
@@ -260,6 +333,26 @@ void proceedConfig(char* name,char* value) {
 void setDefConfig() 
   {
 	syslog(LOG_INFO,"Setting default configuration");
+	/* Key value default */
+#ifdef USE_MORECONF
+	syslog(LOG_INFO,"MORECONF loading default");
+	proceedConfig("FN_F2","1");
+	proceedConfig("FN_F2","1");
+	proceedConfig("FN_F3","2");
+	proceedConfig("FN_F4","4");
+	proceedConfig("FN_F5","8");
+	proceedConfig("FN_F6","16");
+	proceedConfig("FN_F7","32");
+	proceedConfig("FN_F10","128");
+	proceedConfig("FN_F12","64");
+	proceedConfig("S1_BTN","4096");
+	proceedConfig("S2_BTN","8192");
+	proceedConfig("FN_INPUT_VALUE","245");
+	proceedConfig("FN_INPUT_TYPE","4");
+	proceedConfig("FN_INPUT_CODE","4");
+	syslog(LOG_INFO,"MORECONF defaults loaded");
+#endif
+	/* setting default */
 	proceedConfig("DEVICE","AUTO");
 	proceedConfig("ALSA_NAME","Front");
 	proceedConfig("SOUND_STEP","10");		/*mod by SilSha*/
