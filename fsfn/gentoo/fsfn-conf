@@ -3,8 +3,11 @@
 
 # When a function key combination is pressed, some kernel output is usually
 # generated because there is no binding for that scancode. To prevent filling up
-# your kernel logs with unnecessary output, uncomment the following two lines
-# and adjust them if needed. 112 should be a safe keycode in most cases.
+# your kernel logs with unnecessary output, uncomment the following lines
+# and adjust them if needed. 245 should be a safe keycode in most cases.
 
 #SCANCODE=e075
-#KEYCODE=112
+#KEYCODE=245
+
+#Other possible SCANCODE - check your kernel output :-)
+#SCANCODE=0xf5

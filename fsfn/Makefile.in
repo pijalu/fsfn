@@ -149,7 +149,12 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 SUBDIRS = src
-EXTRA_DIST = gentoo/fsfn debian/fsfn etc/fsfn.conf fedora/fsfn
+EXTRA_DIST = \
+	gentoo/fsfn gentoo/fsfn-conf \
+	debian/fsfn debian/fsfn-conf \
+	fedora/fsfn fedora/fsfn-conf \
+	etc/fsfn.conf
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
