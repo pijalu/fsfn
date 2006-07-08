@@ -137,20 +137,46 @@ osd_brightness (int level)
       return -1;
     }
 
-  retval |= xosd_set_bar_length (disp_obj, 100);
-  retval |= xosd_set_pos (disp_obj, XOSD_bottom);
-  retval |= xosd_set_align (disp_obj, XOSD_center);
-  retval |= xosd_set_shadow_offset (disp_obj, 1);
-  retval |= xosd_set_outline_offset (disp_obj, 1);
-  retval |= xosd_set_vertical_offset (disp_obj, 30);
-  retval |= xosd_set_colour (disp_obj, OSD_BCOLOR);
-  retval |= xosd_set_timeout (disp_obj, OSD_TIMEOUT);
-  
-  retval_nc |= xosd_set_font (disp_obj, OSD_FONT);
+  if (xosd_set_bar_length (disp_obj, 100)) {
+	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_bar_length", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_pos (disp_obj, XOSD_bottom)) {
+	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_pos", xosd_error);
+	retval=1;       
+  }
+  if (xosd_set_align (disp_obj, XOSD_center)) {
+       	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_align", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_vertical_offset (disp_obj, 30)) {
+       	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_vertical_offset", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_shadow_offset (disp_obj, 1)) {
+       	syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_shadow_offset", xosd_error);
+	retval_nc=1;
+  }
+  if (xosd_set_outline_offset (disp_obj, 1)) {
+       	syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_outline_offset", xosd_error);
+	retval_nc=1;
+  }
+  if (xosd_set_colour (disp_obj, OSD_BCOLOR)) {
+      syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_color", xosd_error);
+      retval_nc=1; 
+  }
+  if (xosd_set_timeout (disp_obj, OSD_TIMEOUT)) {
+       syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_timeout", xosd_error);
+       retval_nc=1;
+  }
+  if (xosd_set_font (disp_obj, OSD_FONT)) {
+       syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_font", xosd_error);
+       retval_nc=1;
+  }
 
   if (retval)
     {
-      syslog (LOG_CRIT, "Failed critical setup onscreen display: %s\n", xosd_error);
+      syslog (LOG_CRIT, "Failed some critical setup onscreen display\n");
       // if we arrive here, object must be dead...
       osd_unload ();
       return -1;
@@ -159,7 +185,7 @@ osd_brightness (int level)
     {
       // no need to stop for these errors
       if (retval_nc) {
-      	syslog (LOG_CRIT, "Failed non critical setup onscreen display: %s\n", xosd_error);
+      	syslog (LOG_WARNING, "Failed some non critical setup onscreen display\n");
       }
       
       if (level == MAX_BRIGHT)
@@ -233,25 +259,55 @@ osd_volume (int level)
       return -1;
     }
 
-  retval |= xosd_set_bar_length (disp_obj, 100);
-  retval |= xosd_set_pos (disp_obj, XOSD_bottom);
-  retval |= xosd_set_align (disp_obj, XOSD_center);
-  retval |= xosd_set_shadow_offset (disp_obj, 1);
-  retval |= xosd_set_outline_offset (disp_obj, 1);
-  retval |= xosd_set_vertical_offset (disp_obj, 30);	//mod by SilSha
-  if (level == 0) {  
-  	retval |= xosd_set_colour (disp_obj, OSD_VCOLORZ);
+  if (xosd_set_bar_length (disp_obj, 100)) {
+	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_bar_length", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_pos (disp_obj, XOSD_bottom)) {
+	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_pos", xosd_error);
+	retval=1;       
+  }
+  if (xosd_set_align (disp_obj, XOSD_center)) {
+       	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_align", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_vertical_offset (disp_obj, 30)) {
+       	syslog (LOG_CRIT, "Failed critical setup onscreen display: %s : %s\n","xosd_set_vertical_offset", xosd_error);
+	retval=1;
+  }
+  if (xosd_set_shadow_offset (disp_obj, 1)) {
+       	syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_shadow_offset", xosd_error);
+	retval_nc=1;
+  }
+  if (xosd_set_outline_offset (disp_obj, 1)) {
+       	syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_outline_offset", xosd_error);
+	retval_nc=1;
+  }
+  if (xosd_set_timeout (disp_obj, OSD_TIMEOUT)) {
+       syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_timeout", xosd_error);
+       retval_nc=1;
+  }
+  if (xosd_set_font (disp_obj, OSD_FONT)) {
+       syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_font", xosd_error);
+       retval_nc=1;
+  }
+
+  if (level==0) {
+       if (xosd_set_colour (disp_obj, OSD_VCOLORZ)) {
+	    syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_color", xosd_error);
+	    retval_nc=1; 
+       }
   }
   else {
-  retval |= xosd_set_colour (disp_obj, OSD_VCOLOR);
+       if (xosd_set_colour (disp_obj, OSD_VCOLOR)) {
+	    syslog (LOG_WARNING, "Failed non critical setup onscreen display: %s : %s\n","xosd_set_color", xosd_error);
+	    retval_nc=1; 
+       }
   }
-  retval |= xosd_set_timeout (disp_obj, OSD_TIMEOUT);
-  
-  retval_nc |= xosd_set_font (disp_obj, OSD_FONT);
-
+       
   if (retval)
     {
-      syslog (LOG_NOTICE, "Failed critical setup onscreen display: %s", xosd_error);
+      syslog (LOG_CRIT, "Failed some critical setup onscreen display\n");
       // kill possible osd and return
       osd_unload ();
       return -1;
@@ -260,7 +316,7 @@ osd_volume (int level)
     {
       // no need to stop for these errors
       if (retval_nc) {
-      	syslog (LOG_CRIT, "Failed non-critical setup onscreen display: %s\n", xosd_error);
+      	syslog (LOG_WARNING, "Failed some non-critical setup onscreen display\n");
       }
 
       retval = xosd_display (disp_obj, 0, XOSD_slider, level);
