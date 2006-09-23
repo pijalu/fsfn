@@ -74,14 +74,13 @@ int checkConfig(char* key)
 	buffer=getConfig(key);
 	
 	if ((buffer)&&(buffer[0]!='\0')) {
-		syslog(LOG_NOTICE,"Executing [%s]",buffer);
 	 	if (fork () == 0)
 		{
-		    if (execv (buffer, NULL) == -1)
-		    {
-		      syslog (LOG_NOTICE,"Cannot run [%s]: %m",buffer);
-		      exit(0);
-		    }
+		     syslog(LOG_NOTICE,"Executing [%s] - start",buffer);
+		     if (system (buffer) == -1)
+			 syslog (LOG_NOTICE,"Cannot run [%s]: %m",buffer);
+		     syslog(LOG_NOTICE,"Executing [%s] - end",buffer);
+		     exit(0);
 		}
 		return 1;
 	}
