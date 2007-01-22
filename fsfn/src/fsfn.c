@@ -437,11 +437,11 @@ deamonize ()
       
       if ((pidfile=open(PID_FILE,O_RDWR|O_CREAT,0640))<0) {
       	syslog(LOG_CRIT,"Failed to create pid file: %m");
-	exit(EXIT_FAILURE);
+	cleanExit(EXIT_FAILURE);
       }
       if (lockf(pidfile,F_TLOCK,0)<0) {
 	      syslog(LOG_CRIT,"Failed to lock pid file: %m");
-	      exit(EXIT_FAILURE); /* can not lock */
+	      cleanExit(EXIT_FAILURE); /* can not lock */
       }
       sprintf(str,"%d\n",getpid());
       write(pidfile,str,strlen(str)); /* record pid to lockfile */
@@ -450,7 +450,7 @@ deamonize ()
       break;
     case -1:
       perror ("Failed to deamonize");
-      exit (EXIT_FAILURE);
+      cleanExit (EXIT_FAILURE);
     default:
       break;
     }
@@ -535,6 +535,7 @@ main (int argc, char *argv[])
 	default:
 	  //  printf("Unknow option: %c\n",next_option);
 	  usage (argv[0]);
+	  cleanExit(-1);
 	  exit (-1);
 	}
     }
@@ -558,6 +559,7 @@ main (int argc, char *argv[])
 	}
 #endif
     }
+  cleanExit(EXIT_SUCCESS);
   return EXIT_SUCCESS;
 }
 
