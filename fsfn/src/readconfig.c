@@ -417,8 +417,8 @@ void setDefConfig()
 		  proceedConfig("BRIGHTNESS_MIN",tempBuffer);
 	     }
 	     else {
-		  proceedConfig("BRIGHTNESS_MAX","8");
-		  proceedConfig("BRIGHTNESS_MIN","1");
+		  proceedConfig("BRIGHTNESS_MAX","7");
+		  proceedConfig("BRIGHTNESS_MIN","0");
 	     }
 	}
 	else {
