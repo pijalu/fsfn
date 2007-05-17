@@ -21,6 +21,10 @@
 #include <config.h>
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -197,7 +201,6 @@ struct config_entry {
       .value = NULL,
       .ivalue = NULL, 
     },
-
     // DEVICE
     {
       .name = "DEVICE",
@@ -227,6 +230,34 @@ struct config_entry {
       .value = NULL,
       .ivalue = NULL,
     },
+    // Some vaio got different max min...
+    {
+      .name = "BRIGHTNESS_MAX",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "BRIGHTNESS_MIN",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    // DEVICES
+    {
+      .name = "BRIGHTNESS_DEVICE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    {
+      .name = "BRIGHTNESS_DEFAULT_DEVICE",
+      .value = NULL,
+      .ivalue = NULL,
+    },    
+    {
+      .name = "FNKEY_DEVICE",
+      .value = NULL,
+      .ivalue = NULL,
+    },
+    // The end
     {
       .name = NULL
     }
@@ -241,6 +272,8 @@ char* strtrim(char* name);
 void loadConfig();
 void releaseConfig();
 char* getConfig(char* key);
+int fileExist(const char* path);
+int readFileInt(const char* path);
 
 
 // get a config key
@@ -332,8 +365,9 @@ void proceedConfig(char* name,char* value) {
 // set default value for config
 void setDefConfig() 
   {
-	syslog(LOG_INFO,"Setting default configuration");
-	/* Key value default */
+       char tempBuffer[10];
+       syslog(LOG_INFO,"Setting default configuration");
+       /* Key value default */
 #ifdef USE_MORECONF
 	syslog(LOG_INFO,"MORECONF loading default");
 	proceedConfig("FN_F2","1");
@@ -364,6 +398,42 @@ void setDefConfig()
 	proceedConfig("OSD_TIMEOUT","3");
 	proceedConfig("BRT_SETDEFAULT","0"); 		// force new default value
 	proceedConfig("BRT_HACK_FJS","0");
+	// Let be smart and check what is loaded
+	if (fileExist("/sys/devices/platform/sony-laptop/fnkey")) {
+	     int maxBrightness=7;
+	     syslog(LOG_INFO,"Using sony-laptop subsystem");
+	     proceedConfig("BRIGHTNESS_DEVICE",
+			   "/sys/class/backlight/sony/brightness");
+	     proceedConfig("BRIGHTNESS_DEFAULT_DEVICE",
+			   "/sys/devices/platform/sony-laptop/brightness_default");
+	     proceedConfig("FNKEY_DEVICE",
+			   "/sys/devices/platform/sony-laptop/fnkey");	
+	     // Let's find max brightness
+	     if ((maxBrightness=readFileInt(
+		       "/sys/class/backlight/sony/max_brightness"))>=0) {
+		  sprintf(tempBuffer,"%d",maxBrightness);
+		  proceedConfig("BRIGHTNESS_MAX",tempBuffer);
+		  sprintf(tempBuffer,"%d",maxBrightness-BRIGHT_STEP);
+		  proceedConfig("BRIGHTNESS_MIN",tempBuffer);
+	     }
+	     else {
+		  proceedConfig("BRIGHTNESS_MAX","8");
+		  proceedConfig("BRIGHTNESS_MIN","1");
+	     }
+	}
+	else {
+	     syslog(LOG_INFO,"Using sony-acpi subsystem");
+	     proceedConfig("BRIGHTNESS_DEVICE",
+			   "/proc/acpi/sony/brightness");
+	     proceedConfig("BRIGHTNESS_DEFAULT_DEVICE",
+			   "/proc/acpi/sony/brightness_default");
+	     proceedConfig("FNKEY_DEVICE",
+			   "/proc/acpi/sony/fnkey");
+	
+	     proceedConfig("BRIGHTNESS_MAX","8");
+	     proceedConfig("BRIGHTNESS_MIN","1");
+	}
+	
 	syslog(LOG_INFO,"default configuration done");
   }
 
@@ -472,4 +542,24 @@ int getConfigInt(char* key) {
 int setConfig(char* key,char* value) {
 	loadConfig();
 	return setConfigValue(key,value);
+}
+
+int fileExist(const char* path) {
+     struct stat buffer;
+     return (stat(path,&buffer)==0);
+}
+
+int readFileInt(const char* path) {
+     FILE *handle;
+     int ret;
+     if ((handle = fopen(path,"r"))==NULL) {
+	  syslog(LOG_WARNING,"Error reading %s: %m",path);
+	  return -1;
+     }
+     if (fscanf(handle,"%d",&ret) != 1) {
+	  syslog(LOG_WARNING,"Error reading %s: %m",path);
+	  return -1;
+     }
+     fclose(handle);
+     return ret;
 }

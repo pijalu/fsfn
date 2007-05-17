@@ -23,10 +23,10 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <syslog.h>
-
+#include "readconfig.h"
 #include "basicmsg.h"
 
-#define KEY_PATH	"/proc/acpi/sony"
+#define KEY_PATH	getConfig("FNKEY_DEVICE")
 #define KEY_PROJID	'S'
 
 

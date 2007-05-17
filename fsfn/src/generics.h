@@ -77,9 +77,10 @@
 #define  CFG_OSDFONT		9003
 #define  CFG_ALSA_NAME		9004
 
-// The FS series seems to support 8 brightness levels
-#define MAX_BRIGHT 8
-#define MIN_BRIGHT 1
+// The FS series seems to support 7 brightness steps
+#define BRIGHT_STEP 7
+#define MAX_BRIGHT  (getConfigInt("BRIGHTNESS_MAX"))
+#define MIN_BRIGHT  (getConfigInt("BRIGHTNESS_MIN"))
 
 // pidfile for deamon
 #define PID_FILE 	"/var/run/fsfn.pid"

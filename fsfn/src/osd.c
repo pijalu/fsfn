@@ -124,7 +124,11 @@ int
 osd_brightness (int level)
 {
   // the size of the increment
-  static int inc_size = 100.0 / (MAX_BRIGHT - 1);
+  int inc_size = 100.0 / (MAX_BRIGHT-MIN_BRIGHT);
+  
+  // dirty hack to get a zero level
+  level-=MIN_BRIGHT;
+  
   int retval = 0;
   int retval_nc = 0; // non critical errors
   int pos;
@@ -188,23 +192,23 @@ osd_brightness (int level)
       	syslog (LOG_WARNING, "Failed some non critical setup onscreen display\n");
       }
       
-      if (level == MAX_BRIGHT)
-	{
-	  pos = 100;
-	}
+      if (level >= MAX_BRIGHT-MIN_BRIGHT)
+      {
+	   pos = 100;
+      }
       else
-	{
-	  pos = level * inc_size - inc_size;
-	}
+      {
+	   pos = level * inc_size;	       
+      }
 
       retval = xosd_display (disp_obj, 0, XOSD_slider, pos);
 
-	if (OSD_MSG_BRIGHT) // we got a message
+      if (OSD_MSG_BRIGHT) // we got a message
 	{
 		char message[255];
 		if (bright_validated || validate_osd_message(OSD_MSG_BRIGHT)) {
 			bright_validated=1;
-			if (snprintf(message,255,OSD_MSG_BRIGHT,level)>0) {
+			if (snprintf(message,255,OSD_MSG_BRIGHT,MIN_BRIGHT+level)>0) {
 				retval = xosd_display (disp_obj, 1, XOSD_string,message);
 			}
 			else {

@@ -55,14 +55,14 @@ getBrightness ()
 	return _brightness;
   }
 
-  if ((handle = fopen ("/proc/acpi/sony/brightness", "rb")) == NULL)
+  if ((handle = fopen (getConfig("BRIGHTNESS_DEVICE"), "rb")) == NULL)
     {
-      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
+	 syslog (LOG_CRIT,"Error opening %s: %m",getConfig("BRIGHTNESS_DEVICE"));
       exit (-1);
     }
   if (fscanf (handle, "%d", &ret) != 1)
     {
-      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/brightness: %m");
+	 syslog (LOG_CRIT,"Error reading %s: %m",getConfig("BRIGHTNESS_DEVICE"));
       exit (-1);
     }
   fclose (handle);
@@ -89,14 +89,14 @@ setBrightness (int b)
       b = MIN_BRIGHT;
     }
 
-  if ((handle = fopen ("/proc/acpi/sony/brightness", "wb")) == NULL)
+  if ((handle = fopen (getConfig("BRIGHTNESS_DEVICE"), "wb")) == NULL)
     {
-      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness: %m");
+	 syslog (LOG_CRIT,"Error opening %s: %m",getConfig("BRIGHTNESS_DEVICE"));
       exit (-1);
     }
   if (fprintf (handle, "%d", b) != 1)
     {
-      syslog (LOG_CRIT,"Error writing /proc/acpi/sony/brightness: %m");
+	 syslog (LOG_CRIT,"Error %s: %m",getConfig("BRIGHTNESS_DEVICE"));
       exit (-1);
     }
   fclose (handle);
@@ -104,15 +104,17 @@ setBrightness (int b)
   if (getConfigInt("BRT_SETDEFAULT")) 
     {
 	  syslog (LOG_INFO,"Writing to default brigthness");
-	  if ((handle = fopen ("/proc/acpi/sony/brightness_default", "wb")) == NULL)
+	  if ((handle = fopen (getConfig("BRIGHTNESS_DEFAULT_DEVICE"), "wb")) == NULL)
 		{
-		  syslog (LOG_CRIT,"Error opening /proc/acpi/sony/brightness_default: %m");
-		  exit (-1);
+		     syslog (LOG_CRIT,"Error opening %s: %m",
+			     getConfig("BRIGHTNESS_DEFAULT_DEVICE"));
+		     exit (-1);
 		}
 	  if (fprintf (handle, "%d", b) != 1)
 		{
-		  syslog (LOG_CRIT,"Error writing /proc/acpi/sony/brightness_default: %m");
-		  exit (-1);
+		     syslog (LOG_CRIT,"Error writing %s: %m",
+			     getConfig("BRIGHTNESS_DEFAULT_DEVICE"));
+		     exit (-1);
 		}
 	  fclose (handle);
     }
@@ -135,15 +137,17 @@ getCodes ()
 {
   FILE *handle;
   int ret;
-  if ((handle = fopen ("/proc/acpi/sony/fnkey", "rb")) == NULL)
+  if ((handle = fopen (getConfig("FNKEY_DEVICE"), "rb")) == NULL)
     {
-      syslog (LOG_CRIT,"Error opening /proc/acpi/sony/fnkey: %m");
-      exit (-1);
+	 syslog (LOG_CRIT,"Error opening %s: %m",
+		 getConfig("FNKEY_DEVICE"));
+	 exit (-1);
     }
   if (fscanf (handle, "%d", &ret) != 1)
     {
-      syslog (LOG_CRIT,"Error reading /proc/acpi/sony/fnkey: %m");
-      exit (-1);
+	 syslog (LOG_CRIT,"Error reading %s: %m",
+		 getConfig("FNKEY_DEVICE"));
+	 exit (-1);
     }
   fclose (handle);
   return ret;

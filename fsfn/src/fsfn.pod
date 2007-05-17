@@ -217,6 +217,18 @@ Example: the B<Vaio VGN-FJ170/B> needs the following entries:
 FN_F10=1024
 FN_INPUT_VALUE=246
 
+=item B<BRIGHTNESS_MAX>,B<BRIGHTNESS_MIN>
+These items allows to set brightness boundaries.
+
+=item B<BRIGHTNESS_DEVICE>
+This item should point to the brightness device to use.
+
+=item B<BRIGHTNESS_DEFAULT_DEVICE>
+This item should point to the brightness default device to use.
+
+=item B<FNKEY_DEVICE>
+this item should point to the fnkey device.
+
 =back
 
 =head1 EXAMPLE
